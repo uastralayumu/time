@@ -21,4 +21,8 @@ void game_update();
 void game_render();
 void game_deinit();
 
+//------< 外部変数 >-------------------------------------------------------------
+// 草の成長を他のファイルから参照したい場合に使います（未使用でもOK）
+extern int plant_growth;
+
 #endif//SCENE_GAME_H
