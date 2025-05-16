@@ -9,25 +9,36 @@
 //----< インクルード >-----------------------------------------------------------
 #include "all.h"
 #include <sstream>
+#include <memory>
+#include <sstream>
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include "player.h"
+#include"map.h"
+#include "obj.h"
 
 //------< 定数 >----------------------------------------------------------------
 
+extern player play;
+extern maps stege;
+extern obj objs;
 //------< 変数 >----------------------------------------------------------------
+
 int game_state = 0;    // 状態
 int game_timer = 0;    // タイマー
 
-Sprite* sprGreen;
-Sprite* sprPink;
-Sprite* sprRed;
-Sprite* sprYellow;
+
 
 //--------------------------------------
 //  初期設定
 //--------------------------------------
 void game_init()
 {
-    game_state = 0;
-    game_timer = 0;
+
+	game_state = 0;
+	game_timer = 0;
 }
 
 //--------------------------------------
@@ -41,9 +52,11 @@ void game_update()
     {
     case 0:
         //////// 初期設定 ////////
+        play.init();
+        stege.init();
+        objs.init();
+       
         game_state++;
-
-        /*fallthrough*/
     case 1:
         //////// パラメータの設定 ////////
         GameLib::setBlendMode(Blender::BS_ALPHA);
@@ -52,10 +65,9 @@ void game_update()
         /*fallthrough*/
     case 2:
         //////// 通常時 ////////
-
-
-
-
+        play.update();
+        objs.update();
+        //stege.update();
         break;
     }
 
@@ -67,7 +79,10 @@ void game_update()
 //--------------------------------------
 void game_render()
 {
-
+    GameLib::clear(0.0, 0.0, 0.0);
+    stege.render();
+    play.render();
+    objs.render();
 }
 
 //--------------------------------------
@@ -77,3 +92,4 @@ void game_deinit()
 {
     
 }
+
