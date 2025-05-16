@@ -14,11 +14,16 @@
 //------< 構造体 >---------------------------------------------------------------
 
 //------< 変数 >----------------------------------------------------------------
+#include <time.h>
+#include <windows.h>
+#include <memory.h>
+#include"player.h"
+
+
 
 //------< プロトタイプ宣言 >-----------------------------------------------------
 void game_init();
 void game_update();
 void game_render();
 void game_deinit();
-
 #endif//SCENE_GAME_H
