@@ -87,8 +87,19 @@
     <ClInclude Include="GameLib\depth_stencil.h">
       <Filter>GameLib\ヘッダー ファイル</Filter>
     </ClInclude>
+
     <ClInclude Include="GameLib\DirectXTK-master\Inc\Mouse.h">
       <Filter>GameLib\ヘッダー ファイル</Filter>
+
+    <ClInclude Include="SourceCode\map.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\obj.h">
+      <Filter>ヘッダー ファイル</Filter>
+
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +154,17 @@
     <ClCompile Include="GameLib\wnd_proc.cpp">
       <Filter>GameLib\ソース ファイル</Filter>
     </ClCompile>
+
     <ClCompile Include="SourceCode\scene_game.cpp">
+
+    <ClCompile Include="SourceCode\player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\map.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\obj.cpp">
+
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
