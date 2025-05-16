@@ -87,8 +87,8 @@ namespace GameLib
         float       leftX, leftY;       // 左スティック
         float       rightX, rightY;     // 右スティック
         float       left, right;        // 左右トリガー
-        PadAssign*  keyAssign;          // キーボード割り当てデータ
-        PadAssign*  joyAssign;          // ジョイスティック割り当てデータ
+        PadAssign* keyAssign;          // キーボード割り当てデータ
+        PadAssign* joyAssign;          // ジョイスティック割り当てデータ
     };
 
     //==============================================================================
@@ -99,8 +99,8 @@ namespace GameLib
     class InputManager
     {
     private:
-        DirectX::Keyboard*  keyboard = nullptr;   // https://github.com/Microsoft/DirectXTK/wiki/Keyboard
-        DirectX::GamePad*   gamePad = nullptr;    // https://github.com/Microsoft/DirectXTK/wiki/GamePad
+        DirectX::Keyboard* keyboard = nullptr;   // https://github.com/Microsoft/DirectXTK/wiki/Keyboard
+        DirectX::GamePad* gamePad = nullptr;    // https://github.com/Microsoft/DirectXTK/wiki/GamePad
 
         PadState     pad[input::GAMEPAD_NUM] = {};  // ゲームパッド
         POINT        mousePos = {}; 	            // マウス座標

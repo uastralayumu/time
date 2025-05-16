@@ -88,6 +88,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,6 +165,7 @@ attrib +h SourceCode\gp1.log</Command>
     <ClInclude Include="GameLib\blender.h" />
     <ClInclude Include="GameLib\debug.h" />
     <ClInclude Include="GameLib\depth_stencil.h" />
+    <ClInclude Include="GameLib\DirectXTK-master\Inc\Mouse.h" />
     <ClInclude Include="GameLib\dxtk_audio.h" />
     <ClInclude Include="GameLib\font.h" />
     <ClInclude Include="GameLib\frame_rate.h" />
