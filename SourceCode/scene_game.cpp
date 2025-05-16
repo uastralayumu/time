@@ -38,11 +38,10 @@ std::unique_ptr<Mouse> mouse;
 Mouse::ButtonStateTracker mouseTracker;
 
 //------< 変数 >----------------------------------------------------------------
-int game_state = 0;
-int game_timer = 0;
 int plant_growth = 0;
 int fertilizer_amount = 0;  // 肥料量
 int herbicide_amount = 0;   // 除草剤量
+static bool f_prev;
 
 bool show_ui_icon = false;
 bool show_ui_menu = false;
@@ -84,7 +83,7 @@ void game_init()
     fertilizer_amount = 0;
     herbicide_amount = 0;
     current_time = MORNING;
-
+    
     
 }
 
@@ -154,8 +153,8 @@ void game_update()
     {
     case 0:
         plant = sprite_load(L"./Data/Images/plant_kari.png");
-        ui_icon = sprite_load(L"./Data/Images/ui_icon_kari.png");   // 仮
-        ui_menu = sprite_load(L"./Data/Images/ui_menu_kari.png");   // 仮
+        //ui_icon = sprite_load(L"./Data/Images/ui_icon_kari.png");   // 仮
+        //ui_menu = sprite_load(L"./Data/Images/ui_menu_kari.png");   // 仮
 
         //////// 初期設定 ////////
         play.init();
@@ -177,7 +176,7 @@ void game_update()
         update_growth_logic();
 
         // 時間切り替えのトリガー：ここではFキーで切り替え
-        static bool f_prev = false;
+        f_prev = false;
        
     case 2:
         //////// 通常時 ////////
@@ -197,19 +196,20 @@ void game_update()
 void game_render()
 {
   GameLib::clear(0.0, 0.0, 0.0);
+  stege.render();
 
     sprite_render(plant, 700, 920 - plant_growth);
 
-    if (show_ui_icon) {
-        sprite_render(ui_icon, plant_x + 50, plant_y - 50); // UIマーク
-    }
+    //if (show_ui_icon) {
+    //    sprite_render(ui_icon, plant_x + 50, plant_y - 50); // UIマーク
+    //}
 
-    if (show_ui_menu) {
-        sprite_render(ui_menu, 600, 400); // 散布量選択用UI
-    }
+    //if (show_ui_menu) {
+    //    sprite_render(ui_menu, 600, 400); // 散布量選択用UI
+    //}
 
     
-    stege.render();
+   
     play.render();
     objs.render();
 
