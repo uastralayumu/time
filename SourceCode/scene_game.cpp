@@ -63,9 +63,7 @@ void game_init()
     herbicide_amount = 0;
     current_time = MORNING;
 
-    // KeyboardとMouseの初期化
-    keyboard = std::make_unique<Keyboard>();
-    mouse = std::make_unique<Mouse>();
+    
 }
 
 //--------------------------------------
@@ -122,9 +120,8 @@ void update_growth_logic()
 //--------------------------------------
 void game_update()
 {
-    auto kbState = keyboard->GetState();
-    auto mouseState = mouse->GetState();
-    mouseTracker.Update(mouseState);
+    
+  
 
     switch (game_state)
     {
@@ -147,13 +144,10 @@ void game_update()
 
         // 時間切り替えのトリガー：ここではFキーで切り替え
         static bool f_prev = false;
-        bool f_now = kbState.IsKeyDown(Keyboard::F);
+       
 
-        if (f_now && !f_prev) {
-            current_time = (current_time == MORNING) ? NIGHT : MORNING;
-        }
-
-        f_prev = f_now;
+        
+       
         break;
     }
 
