@@ -17,6 +17,7 @@
 #include "../GameLib/DirectXTK-master/Inc/Keyboard.h"
 #include "common.h"
 #include "scene_game.h"
+
 using namespace GameLib;
 using namespace input;
 #endif//ALL_H
