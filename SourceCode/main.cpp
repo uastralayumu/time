@@ -32,7 +32,7 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)// g—p‚µ‚È‚¢•Ï”‚Í‹Lq‚
 
         // Œ»İ‚ÌƒV[ƒ“‚ğXVE•`‰æ
         game_update();
-        game_render();
+        
 
         // ƒfƒoƒbƒO•¶š—ñ‚ğ•`‰æ
         debug::display(1.0f, 1.0f, 1.0f, 1, 1);
