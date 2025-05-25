@@ -185,6 +185,9 @@ attrib +h SourceCode\gp1.log</Command>
     <ClInclude Include="SourceCode\obj.h" />
     <ClInclude Include="SourceCode\player.h" />
     <ClInclude Include="SourceCode\scene_game.h" />
+    <ClInclude Include="SourceCode\serect.h" />
+    <ClInclude Include="SourceCode\sound.h" />
+    <ClInclude Include="SourceCode\title.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameLib\debug.cpp" />
@@ -208,6 +211,9 @@ attrib +h SourceCode\gp1.log</Command>
     <ClCompile Include="SourceCode\obj.cpp" />
     <ClCompile Include="SourceCode\player.cpp" />
     <ClCompile Include="SourceCode\scene_game.cpp" />
+    <ClCompile Include="SourceCode\serect.cpp" />
+    <ClCompile Include="SourceCode\sound.cpp" />
+    <ClCompile Include="SourceCode\title.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

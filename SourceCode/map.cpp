@@ -1,8 +1,11 @@
 #include "map.h"
 #include "obj.h"
+#include "sound.h"
  
 extern player play;
 extern obj objs;
+extern ongaku o;
+
 
 Sprite* asa;
 Sprite* yoru;
@@ -13,12 +16,13 @@ Sprite* sanpu[4];
 Sprite* gorl;
 Sprite* gorlgo;
 Sprite* saboten;
+Sprite* home[2];
 
-void maps::init()
+void maps::init(int &serect_stege)
 {
 	asa = sprite_load(L"./Data/Images/H_asa.png");
 	yoru = sprite_load(L"./Data/Images/H_yoru.png");
-	botan = sprite_load(L"./Data/Images/UI_kari.png");
+	botan = sprite_load(L"./Data/Images/U_kanbanUI.png");
 	tuti = sprite_load(L"./Data/Images/tuti_kari.png");
 	paneru = sprite_load(L"./Data/Images/jyuudenn_kari.png");
 	sanpu[0] = sprite_load(L"./Data/Images/U_sanpu4.png");
@@ -28,13 +32,37 @@ void maps::init()
 	gorl = sprite_load(L"./Data/Images/G_Gole.png");
 	gorlgo = sprite_load(L"./Data/Images/nextUI_kari.png");
 	saboten = sprite_load(L"./Data/Images/saboten.png");
-	for (int i = 0; i < chip_y; i++)
+	home[0] = sprite_load(L"./Data/Images/U_home.png");
+	home[1] = sprite_load(L"./Data/Images/U_home_b.png");
+	o.music(14);
+	o.music(15);
+	
 	{
-		for (int j = 0; j < chip_x; j++)
+
+		for (int i = 0; i < chip_y; i++)
 		{
-			tikei[i][j] = toti[i][j];
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti[i][j];
+			}
 		}
+		botanpos = { 10.0f,10.0f };
+		sabotenpos = { 18,14 };
+		panerupos = { 5,14 };
+		gorlpos = { 25,14 };
+		homepos = { 29,0 };
+		music::pause(15);
 	}
+	kirikae = true;
+	kaihukukirikae = FALSE;
+	kaihuku = 0;
+	kaihukutaimer = 0;
+	gorlhantei = FALSE;
+	homemove = false;
+	gorl_music = false;
+	
+
+	
 }
 
 
@@ -49,8 +77,8 @@ bool maps::isfloor(float x,float y,float width)
 		if (left < 0) continue;
 		if (right >= chip_x * 32) continue;
 		
-		if (ishitdown(left, y)) return true;
-		if (ishitdown(right, y)) return true;
+		if (ishitdown(left + 5, y)) return true;
+		if (ishitdown(right - 5, y)) return true;
 	}
 	return ishitdown(x, y);
 }
@@ -194,17 +222,16 @@ void maps::objmaphoseleft()
 	objs.vector.x = 0.0f;
 }
 
-void maps::state()
+bool maps::state()
 {
 	if (play.position.x + 56 > sabotenpos.x * 64 && play.position.x < sabotenpos.x * 64 + 56 &&
 		play.position.y  < sabotenpos.y * 64 + 96 && play.position.y + 64 > sabotenpos.y * 64)
 	{
-		play.position = { 1000.0f,930.0f };
-		objs.position = { 1500.0f,930.0f };
-		kaihuku = 0;
-		objs.motu = false;
+		
+		return true;
 	}
 	
+	return false;
 }
 
 void maps::syuuryou()
@@ -212,37 +239,79 @@ void maps::syuuryou()
 	if (play.position.x + 48 > gorlpos.x * 64 && play.position.x < gorlpos.x * 64 + 64 &&
 		play.position.y  < gorlpos.y * 64 + 96 && play.position.y > gorlpos.y * 64 + 28)
 	{
+		if(!gorl_music)o.music(9);
+		gorl_music = true;
 		gorlhantei = TRUE;
+	}
+	else
+	{
+		gorl_music = false;
 	}
 }
 
 void maps::update()
 {
+	//朝と夜の切り替え
 	{
 		int getx = getCursorPosX();
 		int gety = getCursorPosY();
-		if (getx > botanpos.x + 70 && getx < botanpos.x + 230 && gety < botanpos.y + 117 && gety > botanpos.y + 65 && TRG(0) & PAD_START)
+		if (getx > botanpos.x + 125 && getx < botanpos.x + 365 && gety < botanpos.y + 215 && gety > botanpos.y + 120)
 		{
-			if (kirikae)kirikae = FALSE;
-			else kirikae = TRUE;
+			if (TRG(0) & PAD_START)
+			{
+				if (!kirikaemusic)
+				{
+					o.music(5);
+				}
+				kirikaemusic = true;
+				if (kirikae)
+				{
+					kirikae = FALSE;
+					music::pause(14);
+					music::resume(15);
+					
+				}
+				else
+				{
+					kirikae = TRUE;
+					music::pause(15);
+					music::resume(14);
+				}
+			}
+			else kirikaemusic = false;
 		}
+		
 	}
 
+	//ソーラーパネルの当たり判定
 	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
 		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
 	{
-		
-		
 			if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
 			{
 				play.position.y = panerupos.y * 64 + 28;
 				play.vector.y = 0;
 				play.onGround = TRUE;
+				if (!onemusic && kaihuku != 3)
+				{
+					o.music(6);
+					onemusic = true;
+					twomusic = false;
+				}
+
 				if (kirikae)
 				{
 					kaihukukirikae = TRUE;
 					if (kaihukutaimer == 0)kaihuku++;
-					if (kaihuku > 3) kaihuku = 3;
+					if (kaihuku > 3)
+					{
+						kaihuku = 3;
+						if (!twomusic)
+						{
+							o.music(7);
+							twomusic = true;
+						}
+					}
 					kaihukutaimer++;
 				}
 				else
@@ -253,13 +322,38 @@ void maps::update()
 	}
 	else
 	{
+		onemusic = false;
+		
 		kaihukukirikae = FALSE;
 	}
 
 	if (kaihukutaimer == 60) kaihukutaimer = 0;
-	state();
 	syuuryou();
 	
+}
+
+void maps::re(int *screen_game)
+{
+	int getx = getCursorPosX();
+	int gety = getCursorPosY();
+	if (homepos.x * 64 - 16 <= getx && homepos.x * 64 + 48 >= getx && homepos.y * 64 + 10 <= gety && homepos.y * 64 + 74 >= gety)
+	{
+		if (!home_music) o.music(2);
+		home_music = true;
+		homemove = true;
+		if (TRG(0) & PAD_START)
+		{
+			music::pause(14);
+			music::pause(15);
+			o.music(3);
+			*screen_game = 1;
+		}
+	}
+	else
+	{
+		home_music = false;
+		homemove = false;
+	}
 }
 
 void maps::render()
@@ -295,7 +389,9 @@ void maps::render()
 				tuti,
 				i * 32, j * 32,
 				1,1,
-				tikei[j][i] * 64);
+				tikei[j][i] * 32, 0,
+				32, 32, 0, 0
+				);
 		}
 	}
 
@@ -311,6 +407,19 @@ void maps::render()
 	
 	sprite_render(botan,
 		botanpos.x, botanpos.y, 1, 1);
+
+	if (!homemove)
+	{
+		sprite_render(home[0],
+			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
+			2, 2);
+	}
+	else
+	{
+		sprite_render(home[1],
+			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
+			2, 2);
+	}
 
 	if (kaihukukirikae)
 	{
@@ -340,4 +449,18 @@ void maps::render()
 		sprite_render(gorlgo,
 			900, 500);
 	}
+}
+
+
+
+void maps::game_deinit()
+{
+	safe_delete(asa);
+	safe_delete(yoru);
+	safe_delete(tuti);
+	safe_delete(sanpu[0]);
+	safe_delete(sanpu[1]);
+	safe_delete(sanpu[2]);
+	safe_delete(sanpu[3]);
+	safe_delete(gorlgo);
 }
