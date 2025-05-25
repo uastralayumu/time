@@ -88,17 +88,17 @@ namespace GameLib
 
         { PAD_SELECT    , Keyboard::F1 },           // VK_F1
 
-//      { PAD_START     , VK_LBUTTON },             // マウス左ボタン
-//      { PAD_SELECT    , VK_RBUTTON },             // マウス右ボタン
-//      { PAD_TRG1      , VK_MBUTTON },             // マウス中ボタン
+        //      { PAD_START     , VK_LBUTTON },             // マウス左ボタン
+        //      { PAD_SELECT    , VK_RBUTTON },             // マウス右ボタン
+        //      { PAD_TRG1      , VK_MBUTTON },             // マウス中ボタン
 
-        { 0x00, 0x00 }                              // 終了コード
+                { 0x00, 0x00 }                              // 終了コード
     };
 
     //--------------------------------------------------------------
     //  キー割り当ての設定
     //--------------------------------------------------------------
-    void InputManager::setKeyAssign(int no, PadAssign *data)
+    void InputManager::setKeyAssign(int no, PadAssign* data)
     {
         pad[no].keyAssign = data;
     }
@@ -106,7 +106,7 @@ namespace GameLib
     //--------------------------------------------------------------
     //  ジョイスティック割り当ての設定
     //--------------------------------------------------------------
-    void InputManager::setJoyAssign(int no, PadAssign *data)
+    void InputManager::setJoyAssign(int no, PadAssign* data)
     {
         pad[no].joyAssign = data;
     }
@@ -170,7 +170,7 @@ namespace GameLib
             p->state = 0;
 
             // キーボード・マウス
-            PadAssign *assign = p->keyAssign;
+            PadAssign* assign = p->keyAssign;
             if (assign)
             {
                 while (assign->bit)
