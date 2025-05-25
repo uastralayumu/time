@@ -1,14 +1,23 @@
 #include "obj.h"
 #include "map.h"
 #include "all.h"
+#include "sound.h"
 
 Sprite* ueki;
 player play;
 extern maps stege;
+extern ongaku o;
 
-void obj::init()
+
+void obj::init(int &serect_stage)
 {
 	ueki = sprite_load(L"./Data/Images/ueki_kari.png");
+	 motu = false;
+	 
+	 {
+		 position = { 1500,930 };
+	 }
+	
 }
 
 void obj::atrihantei()
@@ -23,6 +32,7 @@ void obj::atrihantei()
 	{
 		if (TRG(0) & PAD_TRG4)
 		{
+			o.music(8);
 			motu = true;
 		}
 		if (position.x <= play.position.x + 48 && position.x >= play.position.x + 37) play.position.x = position.x - 48;
@@ -55,58 +65,76 @@ void obj::atrihantei()
 
 void obj::update()
 {
-	vector.y += play.gravite;
-
-	if (vector.y >= 10)
+	if (!play.damege)
 	{
-		vector.y = 10;
-	}
+		vector.y += play.gravite;
 
-	float oldy = position.y;
-	position.y += vector.y;
-	float deltay = position.y - oldy;
-
-	if (deltay > 0 && !motu)
-	{
-		if (stege.isfloor(position.x + 48, position.y + 96, sita.x))
+		if (vector.y >= 10)
 		{
-			stege.objmaphosedown();
-			onGround = true;
+			vector.y = 10;
 		}
-	}
 
-	if (deltay < 0 && !motu)
-	{
-		if (stege.isceiling(position.x + 48, position.y, sita.x))
+		float oldy = position.y;
+		position.y += vector.y;
+		float deltay = position.y - oldy;
+
+		//床の当たり判定（マップチップとの）
+		if (deltay > 0 && !motu)
 		{
-			stege.objmaphoseup();
-			onGround = true;
+			if (stege.isfloor(position.x + 48, position.y + 96, sita.x))
+			{
+				stege.objmaphosedown();
+				onGround = true;
+			}
 		}
-	}
-	if (vector.x > 7.0f) vector.x = 7.0f;
-	if (vector.x < -7.0f) vector.x = -7.0f;
-	float oldx = position.x;
-	position.x += vector.x;
-	float deltax = position.x - oldx;
 
-	bool kabeflag = false;
-
-	if (deltax > 0 && !motu)
-	{
-		if (stege.iswall(position.x + 64, position.y + 32, sita.x))
+		//天井の当たり判定（マップチップとの）
+		if (deltay < 0 && !motu)
 		{
-			stege.objmaphoseright();
-			kabeflag = true;
+			if (stege.isceiling(position.x + 48, position.y, sita.x))
+			{
+				stege.objmaphoseup();
+				onGround = true;
+			}
 		}
-	}
 
-	if (deltax < 0 && !motu)
-	{
-		if (stege.iswall(position.x + 32, position.y + 32, sita.x))
+		//横の当たり判定（マップチップとの）
+		if (!motu)
 		{
-			stege.objmaphoseleft();
-			kabeflag = true;
+			for (int i = 0; i < stege.chip_y; i++)
+			{
+				for (int j = 0; j < stege.chip_x; j++)
+				{
+					if (stege.tikei[j][i] == 0 || stege.tikei[j][i] == 1)
+					{
+						if (position.x > play.position.x)
+						{
+							if (i * 32 + 10 > position.x && i * 32 - 40 < position.x + 32 && j * 32 - 64 > position.y - 32 && j * 32 - 96 < position.y - 16)
+							{
+								if (i * 32 - 40 < position.x + 32 && j * 32 - 64 > position.y - 32 && j * 32 - 96 < position.y - 16)
+								{
+									position.x = i * 32 - 75;
+									play.position.x = position.x - 40;
+								}
+							}
+						}
+						if (position.x < play.position.x)
+						{
+							if (i * 32 + 10 > position.x && i * 32 < position.x + 50 && j * 32 - 64 > position.y - 32 && j * 32 - 96 < position.y - 16)
+							{
+								if (i * 32 + 10 > position.x && j * 32 - 64 > position.y - 32 && j * 32 - 96 < position.y - 16)
+								{
+									position.x = i * 32 + 10;
+									play.position.x = position.x + 40;
+								}
+
+							}
+						}
+					}
+				}
+			}
 		}
+
 	}
 
 }
@@ -116,4 +144,9 @@ void obj::render()
 		sprite_render(
 			ueki, position.x, position.y,
 			1, 1);
+}
+
+void obj::game_deinit()
+{
+	safe_delete(ueki);
 }

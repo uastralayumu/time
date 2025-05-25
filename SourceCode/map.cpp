@@ -1,10 +1,26 @@
 #include "map.h"
 #include "obj.h"
+#include "sound.h"
 
 extern player play;
 extern obj objs;
+extern ongaku o;
 
-int chara_anim = 0;          // ƒAƒjƒ§Œä—pƒJƒEƒ“ƒ^
+//// â”€â”€ å¤–éƒ¨ã‚·ãƒ³ãƒœãƒ«
+constexpr float SANPU_W = 64.0f;
+constexpr float SANPU_H = 64.0f;
+constexpr float PLANT_W = 32.0f;
+constexpr float PLANT_H = 64.0f;
+constexpr float KUKI_W = 32.0f;
+constexpr float KUKI_H = 64.0f;
+constexpr float UI_X = 1500.0f;     
+constexpr float UI_Y = 100.0f;      
+constexpr float UI_W = 340.0f;   // ç”»åƒã‚µã‚¤ã‚ºã«åˆã‚ã›ã¦èª¿æ•´
+constexpr float UI_H = 192.0f;
+
+
+
+int chara_anim = 0;          // ã‚¢ãƒ‹ãƒ¡åˆ¶å¾¡ç”¨ã‚«ã‚¦ãƒ³ã‚¿
 
 Sprite* asa;
 Sprite* yoru;
@@ -15,35 +31,69 @@ Sprite* sanpu[4];
 Sprite* gorl;
 Sprite* gorlgo;
 Sprite* saboten;
+
 Sprite* plant;
-Sprite* chara_jyosou;//œ‘Ü
-Sprite* chara_hiryou;//”ì—¿
-//void maps::init()
-//{
-//	asa = sprite_load(L"./Data/Images/H_asa.png");
-//	yoru = sprite_load(L"./Data/Images/H_yoru.png");
-//	botan = sprite_load(L"./Data/Images/UI_kari.png");
-//	tuti = sprite_load(L"./Data/Images/tuti_kari.png");
-//	paneru = sprite_load(L"./Data/Images/jyuudenn_kari.png");
-//	sanpu[0] = sprite_load(L"./Data/Images/U_sanpu4.png");
-//	sanpu[1] = sprite_load(L"./Data/Images/U_sanpu3.png");
-//	sanpu[2] = sprite_load(L"./Data/Images/U_sanpu2.png");
-//	sanpu[3] = sprite_load(L"./Data/Images/U_sanpu1.png");
-//	gorl = sprite_load(L"./Data/Images/G_Gole.png");
-//	gorlgo = sprite_load(L"./Data/Images/nextUI_kari.png");
-//	saboten = sprite_load(L"./Data/Images/saboten.png");
-//	plant = sprite_load(L"./Data/Images/plant_kari.png");
-//	for (int i = 0; i < chip_y; i++)
-//	{
-//		for (int j = 0; j < chip_x; j++)
-//		{
-//			tikei[i][j] = toti[i][j];
-//		}
-//	}
-//}
+Sprite* chara_jyosou;//é™¤è‰å‰¤
+Sprite* chara_hiryou;//è‚¥æ–™
+Sprite* g_kuki_sprite;          // â€»G_Kuki ãƒ†ã‚¯ã‚¹ãƒãƒ£
+Sprite* U_kettei1;
+Sprite* U_kettei2;
+Sprite* home[2];
 
+void maps::init(int &serect_stege)
+{
+	asa = sprite_load(L"./Data/Images/H_asa.png");
+	yoru = sprite_load(L"./Data/Images/H_yoru.png");
+	botan = sprite_load(L"./Data/Images/U_kanbanUI.png");
+	tuti = sprite_load(L"./Data/Images/tuti_kari.png");
+	paneru = sprite_load(L"./Data/Images/jyuudenn_kari.png");
+	sanpu[0] = sprite_load(L"./Data/Images/U_sanpu4.png");
+	sanpu[1] = sprite_load(L"./Data/Images/U_sanpu3.png");
+	sanpu[2] = sprite_load(L"./Data/Images/U_sanpu2.png");
+	sanpu[3] = sprite_load(L"./Data/Images/U_sanpu1.png");
+	gorl = sprite_load(L"./Data/Images/G_Gole.png");
+	gorlgo = sprite_load(L"./Data/Images/nextUI_kari.png");
+	saboten = sprite_load(L"./Data/Images/saboten.png");
+	home[0] = sprite_load(L"./Data/Images/U_home.png");
+	home[1] = sprite_load(L"./Data/Images/U_home_b.png");
+  plant = sprite_load(L"./Data/Images/plant_kari.png");
+  g_kuki_sprite = sprite_load(L"./Data/Images/G_kuki.png");
+	chara_damage = sprite_load(L"./Data/Images/chara_damage.png");
+	U_kettei1 = sprite_load(L"./Data/Images/U_kettei1.png");
+	U_kettei2 = sprite_load(L"./Data/Images/U_kettei2.png");
+	chara_jyosou = sprite_load(L"./Data/Images/chara_jyosou.png");
+	chara_hiryou = sprite_load(L"./Data/Images/chara_hiryou.png");
 
+	o.music(14);
+	o.music(15);
+	
+	{
+    // å¯å¤‰é ˜åŸŸã‚’å›ºå®šåœ°å½¢ã§åˆæœŸåŒ–
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti[i][j];
+			}
+		}
+		botanpos = { 10.0f,10.0f };
+		sabotenpos = { 18,14 };
+		panerupos = { 5,14 };
+		gorlpos = { 25,14 };
+		homepos = { 29,0 };
+		music::pause(15);
+	}
+	kirikae = true;
+	kaihukukirikae = FALSE;
+	kaihuku = 0;
+	kaihukutaimer = 0;
+	gorlhantei = FALSE;
+	homemove = false;
+	gorl_music = false;
+	
 
+	
+}
 bool maps::isfloor(float x, float y, float width)
 {
 	for (; width > 0; width -= 32)
@@ -54,8 +104,10 @@ bool maps::isfloor(float x, float y, float width)
 		if (left < 0) continue;
 		if (right >= chip_x * 32) continue;
 
-		if (ishitdown(left, y)) return true;
-		if (ishitdown(right, y)) return true;
+		
+		if (ishitdown(left + 5, y)) return true;
+		if (ishitdown(right - 5, y)) return true;
+
 	}
 	return ishitdown(x, y);
 }
@@ -199,17 +251,15 @@ void maps::objmaphoseleft()
 	objs.vector.x = 0.0f;
 }
 
-void maps::state()
+bool maps::state()
 {
 	if (play.position.x + 56 > sabotenpos.x * 64 && play.position.x < sabotenpos.x * 64 + 56 &&
 		play.position.y  < sabotenpos.y * 64 + 96 && play.position.y + 64 > sabotenpos.y * 64)
 	{
-		play.position = { 1000.0f,930.0f };
-		objs.position = { 1500.0f,930.0f };
-		kaihuku = 0;
-		objs.motu = false;
-	}
-
+		
+		return true;
+	}	
+	return false;
 }
 
 void maps::syuuryou()
@@ -217,55 +267,292 @@ void maps::syuuryou()
 	if (play.position.x + 48 > gorlpos.x * 64 && play.position.x < gorlpos.x * 64 + 64 &&
 		play.position.y  < gorlpos.y * 64 + 96 && play.position.y > gorlpos.y * 64 + 28)
 	{
-		gorlhantei = true;
+
+		if(!gorl_music)o.music(9);
+		gorl_music = true;
+		gorlhantei = TRUE;
+	}
+	else
+	{
+		gorl_music = false;
 	}
 }
 
-//void maps::update()
-//{
-//	{
-//		int getx = getCursorPosX();
-//		int gety = getCursorPosY();
-//		if (getx > botanpos.x + 70 && getx < botanpos.x + 230 && gety < botanpos.y + 117 && gety > botanpos.y + 65 && TRG(0) & PAD_START)
-//		{
-//			if (kirikae)kirikae = FALSE;
-//			else kirikae = TRUE;
-//		}
-//	}
 //
-//	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
-//		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
-//	{
-//
-//
-//		if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
-//		{
-//			play.position.y = panerupos.y * 64 + 28;
-//			play.vector.y = 0;
-//			play.onGround = TRUE;
-//			if (kirikae)
-//			{
-//				kaihukukirikae = TRUE;
-//				if (kaihukutaimer == 0)kaihuku++;
-//				if (kaihuku > 3) kaihuku = 3;
-//				kaihukutaimer++;
-//			}
-//			else
-//			{
-//				kaihukukirikae = FALSE;
-//			}
-//		}
-//	}
-//	else
-//	{
-//		kaihukukirikae = FALSE;
-//	}
-//
-//	if (kaihukutaimer == 60) kaihukutaimer = 0;
-//	state();
-//	syuuryou();
-//
-//}
+///*====================================================================
+//    ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ï¼šç°¡æ˜“çŸ©å½¢
+// ====================================================================*/
+struct Rect { float x, y, w, h; };
+static bool hit(const Rect& a, const Rect& b)
+{
+    return !(a.x + a.w < b.x || b.x + b.w < a.x ||
+        a.y + a.h < b.y || b.y + b.h < a.y);
+}
+
+ /*====================================================================
+     sanpu UI å·¦å³ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+  ====================================================================*/
+void maps::handleSanpuClick()
+{
+	if (!kaihukukirikae) return;
+
+	if (!(TRG(0) & PAD_START)) return;
+
+	// ãƒã‚¦ã‚¹åº§æ¨™ã‚’ float ã«ã‚­ãƒ£ã‚¹ãƒˆ
+	float mx = static_cast<float>(getCursorPosX());
+	float my = static_cast<float>(getCursorPosY());
+
+
+
+	// å·¦åŠåˆ†ã‹å³åŠåˆ†ã‹
+	bool clickLeft = (UI_X<mx&&mx<UI_X+UI_W&&UI_Y<my&&my<UI_Y+UI_H);
+	//bool clickRight = !clickLeft;
+
+
+		/*-------------------------------------------------
+	 è‚¥æ–™ï¼é™¤è‰å‰¤ãƒ•ãƒ©ã‚°ã®æ›´æ–°
+	-------------------------------------------------*/
+	if (clickLeft)
+	{
+		/*-------------------- è‚¥æ–™ --------------------*/
+		plantHasFertilizer = true;      // fertilize ãƒ•ãƒ©ã‚° ON
+		plantHasHerbicide = false;     // herbicide ãƒ•ãƒ©ã‚° OFF
+
+
+	}
+	else
+	{
+		/*-------------------- é™¤è‰å‰¤ ------------------*/
+		plantHasHerbicide = true;
+		plantHasFertilizer = false;
+
+
+	}
+
+	
+
+//sanpuã®å·¦ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨plantã«è‚¥æ–™ãŒæ•£å¸ƒã•ã‚Œã¦ã‚‹æ™‚charahiryouãŒå‹•ã
+
+
+
+//sanpuã‚’å³ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨plantã«é™¤è‰å‰¤ãŒæ•£å¸ƒã•ã‚Œã¦ã‚‹æ™‚chara_jyosouãŒå‹•ã
+
+
+
+
+}
+
+/*====================================================================
+    G_Kuki ç”Ÿæˆï¼å‰Šé™¤
+ ====================================================================*/
+void maps::growKuki()
+{
+    DirectX::XMFLOAT2 base = { 700, 920 - plantStage * 32.f };
+    DirectX::XMFLOAT2 p = { base.x + static_cast<float>(kukiList.size() + 1) * 64 * 2, base.y };
+    kukiList.push_back(p);
+}
+void maps::decayKuki()
+{
+    if (!kukiList.empty()) kukiList.pop_back();
+}
+
+/*====================================================================
+    plant / G_Kuki ã¨ã®å½“ãŸã‚Šåˆ¤å®š
+ ====================================================================*/
+bool maps::ishitKukiOrPlant(float x, float y)
+{
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã® AABB
+    Rect pl{ x - 16.0f, y - 32.0f, 32.0f, 64.0f };
+
+    // plant æœ¬ä½“ã® AABB ã‚’å®šæ•°ã§å®šç¾©
+    Rect pr{
+        700.0f,
+        920.0f - plantStage * 32.0f,
+        PLANT_W,
+        PLANT_H
+    };
+    if (hit(pl, pr)) return true;
+
+    // G_Kuki ç¾¤ã¨ã®è¡çª
+    for (auto& k : kukiList) {
+        if (hit(pl, { k.x, k.y, KUKI_W, KUKI_H })) return true;
+    }
+    return false;
+}
+
+
+void maps::update()
+{
+ 
+	//æœã¨å¤œã®åˆ‡ã‚Šæ›¿ãˆ
+	{
+		int getx = getCursorPosX();
+		int gety = getCursorPosY();
+		if (getx > botanpos.x + 125 && getx < botanpos.x + 365 && gety < botanpos.y + 215 && gety > botanpos.y + 120)
+		{
+			if (TRG(0) & PAD_START)
+			{
+				if (!kirikaemusic)
+				{
+					o.music(5);
+				}
+				kirikaemusic = true;
+				if (kirikae)
+				{
+					kirikae = FALSE;
+					music::pause(14);
+					music::resume(15);
+					
+				}
+				else
+				{
+					kirikae = TRUE;
+					music::pause(15);
+					music::resume(14);
+				}
+			}
+			else kirikaemusic = false;
+		}
+		
+	}
+
+	//ã‚½ãƒ¼ãƒ©ãƒ¼ãƒ‘ãƒãƒ«ã®å½“ãŸã‚Šåˆ¤å®š
+	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
+		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
+	{
+			if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
+			{
+				play.position.y = panerupos.y * 64 + 28;
+				play.vector.y = 0;
+				play.onGround = TRUE;
+				if (!onemusic && kaihuku != 3)
+				{
+					o.music(6);
+					onemusic = true;
+					twomusic = false;
+				}
+
+				if (kirikae)
+				{
+					kaihukukirikae = TRUE;
+					if (kaihukutaimer == 0)kaihuku++;
+					if (kaihuku > 3)
+					{
+						kaihuku = 3;
+						if (!twomusic)
+						{
+							o.music(7);
+							twomusic = true;
+						}
+					}
+					kaihukutaimer++;
+				}
+				else
+				{
+					kaihukukirikae = FALSE;
+				}
+			}
+	}
+	else
+	{
+		onemusic = false;
+		
+		kaihukukirikae = FALSE;
+	}
+  
+    /* ---------- æ—¢å­˜ UI ãƒœã‚¿ãƒ³å‡¦ç† ---------- */
+    int cx = getCursorPosX();
+    int cy = getCursorPosY();
+    if (cx > botanpos.x + 70 && cx < botanpos.x + 230 &&
+        cy > botanpos.y + 65 && cy < botanpos.y + 117 &&
+        TRG(0) & PAD_START)
+    {
+        kirikae = !kirikae;
+    }
+
+    /* ---------- sanpu UI & plant å‡¦ç† ---------- */
+    handleSanpuClick();
+    /*updatePlantGrowth();*/
+
+    /* ---------- plant ä»˜è¿‘ã§ sanpu è¡¨ç¤º ---------- */
+    Rect playRect{ play.position.x - 16.0f,
+                     play.position.y - 32.0f,
+                     32.0f, 64.0f };
+
+    
+    Rect plantRect{
+        700.0f,
+        920.0f - plantStage * 32.0f,
+        PLANT_W,
+        PLANT_H
+    };
+
+	
+    kaihukukirikae = hit(playRect, plantRect);
+
+	if (kaihukutaimer == 60) kaihukutaimer = 0;
+  state();
+	syuuryou();
+  
+  // ============================================================
+// maps::update ã®æœ«å°¾ã‚ãŸã‚Šã«è¿½åŠ 
+// ============================================================
+	{
+		// è‚¥æ–™ï¼é™¤è‰å‰¤ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚‹é–“ã ã‘ã‚¢ãƒ‹ãƒ¡ã‚¿ã‚¤ãƒãƒ¼ã‚’é€²ã‚ã‚‹
+		if (plantHasFertilizer || plantHasHerbicide) {
+			chara_anim = (chara_anim + 1) % 60;  // 0ï½59 ã§ãƒ«ãƒ¼ãƒ—
+		}
+		else {
+			chara_anim = 0;
+		}
+	}
+
+	// ============================================================
+	// maps::render å†…ã€sanpu UI æç”»ã®ã‚ã¨ã«è¿½åŠ 
+	// ============================================================
+		// â–  è‚¥æ–™æ•£å¸ƒæ™‚ã‚­ãƒ£ãƒ©ã‚¢ãƒ‹ãƒ¡
+	if (plantHasFertilizer) {
+		// ä¾‹ï¼šä¸Šä¸‹ã«ã‚†ã‚‰ã‚†ã‚‰å‹•ã‹ã™
+		float dy = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
+		sprite_render(chara_hiryou,
+			play.position.x, play.position.y + 64 + dy,
+			1, 1);
+	}
+
+	// â–  é™¤è‰å‰¤æ•£å¸ƒæ™‚ã‚­ãƒ£ãƒ©ã‚¢ãƒ‹ãƒ¡
+	if (plantHasHerbicide) {
+		// ä¾‹ï¼šå·¦å³ã«ã‚†ã‚‰ã‚†ã‚‰å‹•ã‹ã™
+		float dx = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
+		sprite_render(chara_jyosou,
+			play.position.x + dx, play.position.y + 64,
+			1, 1);
+	}
+	
+}
+
+void maps::re(int *screen_game)
+{
+	int getx = getCursorPosX();
+	int gety = getCursorPosY();
+	if (homepos.x * 64 - 16 <= getx && homepos.x * 64 + 48 >= getx && homepos.y * 64 + 10 <= gety && homepos.y * 64 + 74 >= gety)
+	{
+		if (!home_music) o.music(2);
+		home_music = true;
+		homemove = true;
+		if (TRG(0) & PAD_START)
+		{
+			music::pause(14);
+			music::pause(15);
+			o.music(3);
+			*screen_game = 1;
+		}
+	}
+	else
+	{
+		home_music = false;
+		homemove = false;
+	}
+}
 
 void maps::render()
 {
@@ -299,8 +586,11 @@ void maps::render()
 			sprite_render(
 				tuti,
 				i * 32, j * 32,
-				1, 1,
-				tikei[j][i] * 64);
+
+				1,1,
+				tikei[j][i] * 32, 0,
+				32, 32, 0, 0
+				);
 		}
 	}
 
@@ -316,6 +606,7 @@ void maps::render()
 
 	sprite_render(botan,
 		botanpos.x, botanpos.y, 1, 1);
+
 
 	sprite_render(chara_hiryou,
 		play.position.x + 100, play.position.y,
@@ -337,7 +628,22 @@ void maps::render()
 			96);
 	}*/
 	sprite_render(plant, 700, 920 - plant_growth);
-	//kaihuku‚ª‰©F‚¢ƒ{ƒ^ƒ“sanpul‚ªUI”ì—¿‚Ì‚â‚Â
+	//kaihukuãŒé»„è‰²ã„ãƒœã‚¿ãƒ³sanpulãŒUIè‚¥æ–™ã®ã‚„ã¤
+
+	if (!homemove)
+	{
+		sprite_render(home[0],
+			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
+			2, 2);
+	}
+	else
+	{
+		sprite_render(home[1],
+			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
+			2, 2);
+	}
+
+
 	if (kaihukukirikae)
 	{
 		switch (kaihuku)
@@ -369,681 +675,17 @@ void maps::render()
 
 }
 
-// ------------------------------------------------------------
-// maps.cpp
-// ------------------------------------------------------------
-//#include "map.h"
-//
-//#include "player.h"
-//#include "obj.h"
-//#include <cassert>
-//#include <algorithm>
-//#include <cmath>
-
-extern player play;
-extern obj objs;
-
-//// „Ÿ„Ÿ ŠO•”ƒVƒ“ƒ{ƒ‹
-constexpr float SANPU_W = 64.0f;
-constexpr float SANPU_H = 64.0f;
-constexpr float PLANT_W = 32.0f;
-constexpr float PLANT_H = 64.0f;
-constexpr float KUKI_W = 32.0f;
-constexpr float KUKI_H = 64.0f;
-constexpr float UI_X = 1500.0f;     
-constexpr float UI_Y = 100.0f;      
-constexpr float UI_W = 340.0f;   // ‰æ‘œƒTƒCƒY‚É‡‚í‚¹‚Ä’²®
-constexpr float UI_H = 192.0f;
-
-//extern player play;
-//extern obj    objs;
-////extern player play;
-////extern obj    objs;
-//
-//// „Ÿ„Ÿ ƒXƒvƒ‰ƒCƒg
-//Sprite* asa;
-//Sprite* yoru;
-//Sprite* tuti;
-//Sprite* botan;
-//Sprite* paneru;
-//Sprite* sanpu[4];
-//Sprite* gorl;
-//Sprite* gorlgo;
-//Sprite* saboten;
-//Sprite* plant;
-Sprite* g_kuki_sprite;          // ¦G_Kuki ƒeƒNƒXƒ`ƒƒ
-Sprite* chara_damage;
-Sprite* U_kettei1;
-Sprite* U_kettei2;
 
 
-//
-///*====================================================================
-//    ƒ†[ƒeƒBƒŠƒeƒBFŠÈˆÕ‹éŒ`
-// ====================================================================*/
-struct Rect { float x, y, w, h; };
-static bool hit(const Rect& a, const Rect& b)
+void maps::game_deinit()
 {
-    return !(a.x + a.w < b.x || b.x + b.w < a.x ||
-        a.y + a.h < b.y || b.y + b.h < a.y);
+	safe_delete(asa);
+	safe_delete(yoru);
+	safe_delete(tuti);
+	safe_delete(sanpu[0]);
+	safe_delete(sanpu[1]);
+	safe_delete(sanpu[2]);
+	safe_delete(sanpu[3]);
+	safe_delete(gorlgo);
 }
 
-/*====================================================================
-    maps::init
- ====================================================================*/
-void maps::init()
-{
-    asa = sprite_load(L"./Data/Images/H_asa.png");
-    yoru = sprite_load(L"./Data/Images/H_yoru.png");
-    botan = sprite_load(L"./Data/Images/UI_kari.png");
-    tuti = sprite_load(L"./Data/Images/tuti_kari.png");
-    paneru = sprite_load(L"./Data/Images/jyuudenn_kari.png");
-    sanpu[0] = sprite_load(L"./Data/Images/U_sanpu4.png");
-    sanpu[1] = sprite_load(L"./Data/Images/U_sanpu3.png");
-    sanpu[2] = sprite_load(L"./Data/Images/U_sanpu2.png");
-    sanpu[3] = sprite_load(L"./Data/Images/U_sanpu1.png");
-    gorl = sprite_load(L"./Data/Images/G_Gole.png");
-    gorlgo = sprite_load(L"./Data/Images/nextUI_kari.png");
-    saboten = sprite_load(L"./Data/Images/saboten.png");
-    plant = sprite_load(L"./Data/Images/plant_kari.png");
-    g_kuki_sprite = sprite_load(L"./Data/Images/G_kuki.png");
-	chara_damage = sprite_load(L"./Data/Images/chara_damage.png");
-	U_kettei1 = sprite_load(L"./Data/Images/U_kettei1.png");
-	U_kettei2 = sprite_load(L"./Data/Images/U_kettei2.png");
-	chara_jyosou = sprite_load(L"./Data/Images/chara_jyosou.png");
-	chara_hiryou = sprite_load(L"./Data/Images/chara_hiryou.png");
-
-    // ‰Â•Ï—Ìˆæ‚ğŒÅ’è’nŒ`‚Å‰Šú‰»
-   /* for (int i = 0; i < chip_y; i++)
-        for (int j = 0; j < chip_x; j++)
-            tikei[i][j] = toti[i][j]; */
-	for (int i = 0; i < chip_y; i++)
-	{
-		for (int j = 0; j < chip_x; j++)
-		{
-			tikei[i][j] = toti[i][j];
-		}
-	}
-}
-
-
- /*====================================================================
-     sanpu UI ¶‰EƒNƒŠƒbƒNˆ—
-  ====================================================================*/
-void maps::handleSanpuClick()
-{
-	if (!kaihukukirikae) return;
-
-	if (!(TRG(0) & PAD_START)) return;
-
-	// ƒ}ƒEƒXÀ•W‚ğ float ‚ÉƒLƒƒƒXƒg
-	float mx = static_cast<float>(getCursorPosX());
-	float my = static_cast<float>(getCursorPosY());
-
-
-
-	// ¶”¼•ª‚©‰E”¼•ª‚©
-	bool clickLeft = (UI_X<mx&&mx<UI_X+UI_W&&UI_Y<my&&my<UI_Y+UI_H);
-	//bool clickRight = !clickLeft;
-
-
-		/*-------------------------------------------------
-	 ”ì—¿^œ‘Üƒtƒ‰ƒO‚ÌXV
-	-------------------------------------------------*/
-	if (clickLeft)
-	{
-		/*-------------------- ”ì—¿ --------------------*/
-		plantHasFertilizer = true;      // fertilize ƒtƒ‰ƒO ON
-		plantHasHerbicide = false;     // herbicide ƒtƒ‰ƒO OFF
-
-
-	}
-	else
-	{
-		/*-------------------- œ‘Ü ------------------*/
-		plantHasHerbicide = true;
-		plantHasFertilizer = false;
-
-
-	}
-
-	
-
-//sanpu‚Ì¶‚ğƒNƒŠƒbƒN‚·‚é‚Æplant‚É”ì—¿‚ªU•z‚³‚ê‚Ä‚écharahiryou‚ª“®‚­
-
-
-
-//sanpu‚ğ‰EƒNƒŠƒbƒN‚·‚é‚Æplant‚Éœ‘Ü‚ªU•z‚³‚ê‚Ä‚échara_jyosou‚ª“®‚­
-
-
-
-
-}
-/*====================================================================
-    G_Kuki ¶¬^íœ
- ====================================================================*/
-void maps::growKuki()
-{
-    DirectX::XMFLOAT2 base = { 700, 920 - plantStage * 32.f };
-    DirectX::XMFLOAT2 p = { base.x + static_cast<float>(kukiList.size() + 1) * 64 * 2, base.y };
-    kukiList.push_back(p);
-}
-void maps::decayKuki()
-{
-    if (!kukiList.empty()) kukiList.pop_back();
-}
-
-/*====================================================================
-    plant / G_Kuki ‚Æ‚Ì“–‚½‚è”»’è
- ====================================================================*/
-bool maps::ishitKukiOrPlant(float x, float y)
-{
-    // ƒvƒŒƒCƒ„[‚Ì AABB
-    Rect pl{ x - 16.0f, y - 32.0f, 32.0f, 64.0f };
-
-    // plant –{‘Ì‚Ì AABB ‚ğ’è”‚Å’è‹`
-    Rect pr{
-        700.0f,
-        920.0f - plantStage * 32.0f,
-        PLANT_W,
-        PLANT_H
-    };
-    if (hit(pl, pr)) return true;
-
-    // G_Kuki ŒQ‚Æ‚ÌÕ“Ë
-    for (auto& k : kukiList) {
-        if (hit(pl, { k.x, k.y, KUKI_W, KUKI_H })) return true;
-    }
-    return false;
-}
-
-///*====================================================================
-//    maps::update
-// ====================================================================*/
-void maps::update()
-{
-    /* ---------- Šù‘¶ UI ƒ{ƒ^ƒ“ˆ— ---------- */
-    int cx = getCursorPosX();
-    int cy = getCursorPosY();
-    if (cx > botanpos.x + 70 && cx < botanpos.x + 230 &&
-        cy > botanpos.y + 65 && cy < botanpos.y + 117 &&
-        TRG(0) & PAD_START)
-    {
-        kirikae = !kirikae;
-    }
-
-    /* ---------- sanpu UI & plant ˆ— ---------- */
-    handleSanpuClick();
-    /*updatePlantGrowth();*/
-
-    /* ---------- plant •t‹ß‚Å sanpu •\¦ ---------- */
-    Rect playRect{ play.position.x - 16.0f,
-                     play.position.y - 32.0f,
-                     32.0f, 64.0f };
-
-    
-    Rect plantRect{
-        700.0f,
-        920.0f - plantStage * 32.0f,
-        PLANT_W,
-        PLANT_H
-    };
-
-	
-    kaihukukirikae = hit(playRect, plantRect);
-	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
-		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
-	{
-
-
-		if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
-		{
-			play.position.y = panerupos.y * 64 + 28;
-			play.vector.y = 0;
-			play.onGround = TRUE;
-			if (kirikae)
-			{
-				kaihukukirikae = TRUE;
-				if (kaihukutaimer == 0)kaihuku++;
-				if (kaihuku > 3) kaihuku = 3;
-				kaihukutaimer++;
-			}
-			else
-			{
-				kaihukukirikae = FALSE;
-			}
-		}
-	}
-	else if(hit(playRect, plantRect) == FALSE)
-	{
-		kaihukukirikae = FALSE;
-	}
-
-	if (kaihukutaimer == 60) kaihukutaimer = 0;
-	state();
-	syuuryou();
-// ============================================================
-// maps::update ‚Ì––”ö‚ ‚½‚è‚É’Ç‰Á
-// ============================================================
-	{
-		// ”ì—¿^œ‘Üƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚éŠÔ‚¾‚¯ƒAƒjƒƒ^ƒCƒ}[‚ği‚ß‚é
-		if (plantHasFertilizer || plantHasHerbicide) {
-			chara_anim = (chara_anim + 1) % 60;  // 0`59 ‚Åƒ‹[ƒv
-		}
-		else {
-			chara_anim = 0;
-		}
-	}
-
-	// ============================================================
-	// maps::render “àAsanpu UI •`‰æ‚Ì‚ ‚Æ‚É’Ç‰Á
-	// ============================================================
-		// ¡ ”ì—¿U•zƒLƒƒƒ‰ƒAƒjƒ
-	if (plantHasFertilizer) {
-		// —áFã‰º‚É‚ä‚ç‚ä‚ç“®‚©‚·
-		float dy = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
-		sprite_render(chara_hiryou,
-			play.position.x, play.position.y + 64 + dy,
-			1, 1);
-	}
-
-	// ¡ œ‘ÜU•zƒLƒƒƒ‰ƒAƒjƒ
-	if (plantHasHerbicide) {
-		// —áF¶‰E‚É‚ä‚ç‚ä‚ç“®‚©‚·
-		float dx = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
-		sprite_render(chara_jyosou,
-			play.position.x + dx, play.position.y + 64,
-			1, 1);
-	}
-}
-    /* ---------- ƒpƒlƒ‹”»’èiŠù‘¶j ---------- */
-    // ...iŠù‘¶‚Ìƒpƒlƒ‹æ‚è”»’èƒR[ƒh‚ğ‚»‚Ì‚Ü‚Üj...
-
-   // state();
-    //syuuryou();
-//}
-//
-///*====================================================================
-//    maps::render
-// ====================================================================*/
-//void maps::render()
-//{
-//    /* ---------- ”wŒi ---------- */
-//    sprite_render(kirikae ? asa : yoru, 0, 0, 1, 1, 0, 0, 1980, 1080);
-//
-//    /* ---------- ’nŒ` ---------- */
-//    for (int i = 0; i < chip_x; i++)
-//        for (int j = 0; j < chip_y; j++)
-//            sprite_render(tuti, i * 32, j * 32, 1, 1, tikei[j][i] * 64);
-//
-//    /* ---------- ƒIƒuƒWƒFƒNƒg ---------- */
-//    sprite_render(paneru, 64 * panerupos.x, 64 * panerupos.y + 32);
-//    sprite_render(saboten, sabotenpos.x * 64, sabotenpos.y * 64 + 32);
-//    sprite_render(gorl, 64 * gorlpos.x, 64 * gorlpos.y + 32);
-//
-//    /* ---------- plant & G_Kuki ---------- */
-//    sprite_render(plant, 700, 920 - plantStage * 32.f);
-//    for (auto& k : kukiList)
-//        sprite_render(g_kuki_sprite, k.x, k.y);
-//
-//    /* ---------- sanpu UI ---------- */
-//    if (kaihukukirikae) {
-//        sprite_render(sanpu[plantStage], 1500, 100);
-//    }
-//
-//    /* ---------- ‚»‚Ì‘¼ UI ---------- */
-//    sprite_render(botan, botanpos.x, botanpos.y);
-//    if (gorlhantei)
-//        sprite_render(gorlgo, 900, 500);
-//}
-
-
-
-
-//#include "map.h"
-//#include "obj.h"
-// 
-//extern player play;
-//extern obj objs;
-//
-//Sprite* asa;
-//Sprite* yoru;
-//Sprite* tuti;
-//Sprite* botan;
-//Sprite* paneru;
-//Sprite* sanpu[4];
-//Sprite* gorl;
-//Sprite* gorlgo;
-//Sprite* saboten;
-//Sprite* plant;
-//void maps::init()
-//{
-//	asa = sprite_load(L"./Data/Images/H_asa.png");
-//	yoru = sprite_load(L"./Data/Images/H_yoru.png");
-//	botan = sprite_load(L"./Data/Images/UI_kari.png");
-//	tuti = sprite_load(L"./Data/Images/tuti_kari.png");
-//	paneru = sprite_load(L"./Data/Images/jyuudenn_kari.png");
-//	sanpu[0] = sprite_load(L"./Data/Images/U_sanpu4.png");
-//	sanpu[1] = sprite_load(L"./Data/Images/U_sanpu3.png");
-//	sanpu[2] = sprite_load(L"./Data/Images/U_sanpu2.png");
-//	sanpu[3] = sprite_load(L"./Data/Images/U_sanpu1.png");
-//	gorl = sprite_load(L"./Data/Images/G_Gole.png");
-//	gorlgo = sprite_load(L"./Data/Images/nextUI_kari.png");
-//	saboten = sprite_load(L"./Data/Images/saboten.png");
-//	plant = sprite_load(L"./Data/Images/plant_kari.png");
-//	for (int i = 0; i < chip_y; i++)
-//	{
-//		for (int j = 0; j < chip_x; j++)
-//		{
-//			tikei[i][j] = toti[i][j];
-//		}
-//	}
-//}
-//
-//
-//
-//bool maps::isfloor(float x,float y,float width)
-//{
-//	for (; width > 0; width -= 32)
-//	{
-//		const float left = x - width;
-//		const float right = x + width;
-//
-//		if (left < 0) continue;
-//		if (right >= chip_x * 32) continue;
-//		
-//		if (ishitdown(left, y)) return true;
-//		if (ishitdown(right, y)) return true;
-//	}
-//	return ishitdown(x, y);
-//}
-//
-//bool maps::isceiling(float x, float y, float width)
-//{
-//	for (; width > 0; width -= 32)
-//	{
-//		const float left = x - width;
-//		const float right = x + width;
-//
-//		if (left < 240) continue;
-//		if (right >= chip_x * 32) continue;
-//		if (ishitall(left, y)) 
-//			return true;
-//		if (ishitall(right, y)) 
-//			return true;
-//	}
-//	return ishitall(x, y);
-//}
-//
-//bool maps::iswall(float x, float y, float height)
-//{
-//	for (; height > 0; height -= 32)
-//	{
-//		const float yPos = y - height;
-//		if (yPos < 0)      continue;
-//		if (yPos > chip_y * 32) continue;
-//
-//		if (ishitall(x, yPos))
-//			return true;
-//		if (ishitall(x, yPos + 32))
-//			return true;
-//		if (ishitall(x, yPos + 64))
-//			return true;
-//	}
-//
-//	return ishitall(x, y);
-//}
-//
-//int maps::getdata(char mapchip[][chip_x], const DirectX::XMFLOAT2& pos)
-//{
-//	int divx = static_cast<int>(pos.x) / 32;
-//	int divy = static_cast<int>(pos.y) / 32;
-//
-//	if (divx < 0 || divx >= chip_x ||
-//		divy < 0 || divy >= chip_y)
-//		return -1;
-//
-//	return mapchip[divy][divx];
-//}
-//
-//bool maps::ishitdown(float x, float y)
-//{
-//	DirectX::XMFLOAT2 pos = { x, y };
-//	switch (getTerrainAttr(pos))
-//	{
-//	case tr_attr::ALL_BLOCK: return true;
-//	}
-//	return false;
-//
-//}
-//
-//bool maps::ishitall(float x, float y)
-//{
-//	DirectX::XMFLOAT2 pos = { x, y };
-//	return(getTerrainAttr(pos)) == ALL_BLOCK;
-//}
-//
-//maps::tr_attr maps::getTerrainAttr(const DirectX::XMFLOAT2& pos)
-//{
-//	int index = getdata(tikei, pos);
-//	if (index < 0)return TR_NONE;
-//	assert(index < CHIP_NUM_PER_LINE* CHIP_LINE_NUM);
-//	return tikeiattr[index];
-//}
-//
-//void maps::playmaphosedown()
-//{
-//	float y = play.position.y;
-//	int inty = static_cast<int>(y);
-//	y = static_cast<float>(inty - inty % 32);
-//	play.position.y = y + 5.01f;
-//	play.vector.y = (std::min)(play.vector.y, 0.0f);
-//}
-//
-//void maps::playmaphoseup()
-//{
-//	float y = play.position.y;
-//	y += 32 - fmodf(y, 32);
-//	play.position.y = y - 8;
-//	play.vector.y = (std::max)(play.vector.y, 0.0f);
-//}
-//
-//void maps::playmaphoseright()
-//{
-//	float x = play.position.x;
-//	x -= fmodf(x, 32);
-//	play.position.x = x - 0.025f;
-//	play.vector.x = 0.0f;
-//}
-//
-//void maps::playmaphoseleft()
-//{
-//	float x = play.position.x;
-//	x -= fmodf(x, 32);
-//	play.position.x = x + 32 + 0.025f;
-//	play.vector.x = 0.0f;
-//}
-//
-//void maps::objmaphosedown()
-//{
-//	float y = objs.position.y;
-//	int inty = static_cast<int>(y);
-//	y = static_cast<float>(inty - inty % 32);
-//	objs.position.y = y - 0.01f;
-//	objs.vector.y = (std::min)(objs.vector.y, 0.0f);
-//}
-//
-//void maps::objmaphoseup()
-//{
-//	float y = objs.position.y;
-//	y += 32 - fmodf(y, 32);
-//	objs.position.y = y - 8;
-//	objs.vector.y = (std::max)(objs.vector.y, 0.0f);
-//}
-//
-//void maps::objmaphoseright()
-//{
-//	float x = objs.position.x;
-//	x -= fmodf(x, 32);
-//	objs.position.x = x - 0.025f;
-//	objs.vector.x = 0.0f;
-//}
-//
-//void maps::objmaphoseleft()
-//{
-//	float x = objs.position.x;
-//	x -= fmodf(x, 32);
-//	objs.position.x = x + 32 + 0.025f;
-//	objs.vector.x = 0.0f;
-//}
-//
-//void maps::state()
-//{
-//	if (play.position.x + 56 > sabotenpos.x * 64 && play.position.x < sabotenpos.x * 64 + 56 &&
-//		play.position.y  < sabotenpos.y * 64 + 96 && play.position.y + 64 > sabotenpos.y * 64)
-//	{
-//		play.position = { 1000.0f,930.0f };
-//		objs.position = { 1500.0f,930.0f };
-//		kaihuku = 0;
-//		objs.motu = false;
-//	}
-//	
-//}
-//
-//void maps::syuuryou()
-//{
-//	if (play.position.x + 48 > gorlpos.x * 64 && play.position.x < gorlpos.x * 64 + 64 &&
-//		play.position.y  < gorlpos.y * 64 + 96 && play.position.y > gorlpos.y * 64 + 28)
-//	{
-//		gorlhantei = TRUE;
-//	}
-//}
-//
-//void maps::update()
-//{
-//	{
-//		int getx = getCursorPosX();
-//		int gety = getCursorPosY();
-//		if (getx > botanpos.x + 70 && getx < botanpos.x + 230 && gety < botanpos.y + 117 && gety > botanpos.y + 65 && TRG(0) & PAD_START)
-//		{
-//			if (kirikae)kirikae = FALSE;
-//			else kirikae = TRUE;
-//		}
-//	}
-//
-//	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
-//		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
-//	{
-//		
-//		
-//			if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
-//			{
-//				play.position.y = panerupos.y * 64 + 28;
-//				play.vector.y = 0;
-//				play.onGround = TRUE;
-//				if (kirikae)
-//				{
-//					kaihukukirikae = TRUE;
-//					if (kaihukutaimer == 0)kaihuku++;
-//					if (kaihuku > 3) kaihuku = 3;
-//					kaihukutaimer++;
-//				}
-//				else
-//				{
-//					kaihukukirikae = FALSE;
-//				}
-//			}
-//	}
-//	else
-//	{
-//		kaihukukirikae = FALSE;
-//	}
-//	
-//	if (kaihukutaimer == 60) kaihukutaimer = 0;
-//	state();
-//	syuuryou();
-//	
-//}
-//
-//void maps::render()
-//{
-//	if (kirikae)
-//	{
-//		sprite_render(asa,
-//			0, 0,
-//			1, 1,
-//			0, 0,
-//			1980, 1080,
-//			0, 0,
-//			0,
-//			1, 1, 1, 1);
-//	}
-//	else
-//	{
-//		sprite_render(yoru,
-//			0, 0,
-//			1, 1,
-//			0, 0,
-//			1980, 1080,
-//			0, 0,
-//			0,
-//			1, 1, 1, 1);
-//	}
-//
-//	for (int i = 0; i < chip_x; i++)
-//	{
-//		for (int j = 0; j < chip_y; j++)
-//		{
-//			sprite_render(
-//				tuti,
-//				i * 32, j * 32,
-//				1,1,
-//				tikei[j][i] * 64);
-//		}
-//	}
-//
-//	sprite_render(paneru,
-//		64 * panerupos.x, 64 * panerupos.y + 32);
-//
-//	sprite_render(saboten,
-//		sabotenpos.x * 64, sabotenpos.y * 64 + 32);
-//
-//	sprite_render(gorl,
-//		64 * gorlpos.x, 64 * gorlpos.y + 32);
-//
-//	
-//	sprite_render(botan,
-//		botanpos.x, botanpos.y, 1, 1);
-//	
-//	sprite_render(plant, 700, 920 - plant_growth);
-//	//kaihuku‚ª‰©F‚¢ƒ{ƒ^ƒ“sanpul‚ªUI”ì—¿‚Ì‚â‚Â
-//	if (kaihukukirikae)
-//	{
-//		switch (kaihuku)
-//		{
-//		case 0:
-//			sprite_render(sanpu[0],
-//				1500, 100, 1, 1);
-//			break;
-//		case 1:
-//			sprite_render(sanpu[1],
-//				1500, 100, 1, 1);
-//			break;
-//		case 2:
-//			sprite_render(sanpu[2],
-//				1500, 100, 1, 1);
-//			break;
-//		case 3:
-//			sprite_render(sanpu[3],
-//				1500, 100, 1, 1);
-//			break;
-//		}
-//	}
-//
-//	if (gorlhantei)
-//	{
-//		sprite_render(gorlgo,
-//			900, 500);
-//	}
-//	
-//}

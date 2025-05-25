@@ -20,6 +20,9 @@ using namespace input;  // input名前空間使う想定
 #include "player.h"
 #include"map.h"
 #include "obj.h"
+#include "title.h"
+#include "sound.h"
+#include "serect.h"
 
 
 //------< 定数・型定義 >----------------------------------------------------------------
@@ -42,9 +45,13 @@ std::unique_ptr<Mouse> mouse;
 Mouse::ButtonStateTracker mouseTracker;
 
 //------< 変数 >----------------------------------------------------------------
-int game_state = 0;
-int game_timer = 0;
 int plant_growth = 0;
+
+
+int fertilizer_amount = 0;  // 肥料量
+int herbicide_amount = 0;   // 除草剤量
+static bool f_prev;
+
 
 
 
@@ -64,25 +71,30 @@ float plant_y = 920.0f;
 extern player play;
 extern maps stege;
 extern obj objs;
+extern ongaku o;
+title t;
+serect s;
+
+
+
+
+
 //------< 変数 >----------------------------------------------------------------
 
-
-
-
-
+int game_state = 0;    // 状態
+int game_timer = 0;    // タイマー
+int game_title = 0;
+int serect_state = 0;
 //--------------------------------------
 // 初期設定
 //--------------------------------------
 void game_init()
 {
-
+    serect_state = 0;
+    game_title = 0;
     game_state = 0;
     game_timer = 0;
-    plant_growth = 0;
-    
-    current_time = MORNING;
-
-    
+    current_time = MORNING;   
 }
 
 
@@ -98,27 +110,57 @@ void game_update()
     switch (game_state)
     {
     case 0:
-       /* plant = sprite_load(L"./Data/Images/plant_kari.png");*/
-        
-        //////// 初期設定 ////////
-        play.init();
-        stege.init();
-        objs.init();
-       
+
+
+        //////// �p�����[�^�̐ݒ� ////////
+        GameLib::setBlendMode(Blender::BS_ALPHA);
+        o.init();
+
         game_state++;
     case 1:
-        //////// パラメータの設定 ////////
-
-        GameLib::setBlendMode(Blender::BS_ALPHA);
+   
+        t.init();
         game_state++;
-
-      
     case 2:
-        //////// 通常時 ////////
+        t.update(&game_title);
+        t.render();
+        if (game_title == 1)
+        {
+            game_state = 5;
+            serect_state = 0;
+        }
+        if (game_title == 2) game_state++;
+        if (game_title > 0) t.deinit();
+        break;
+    case 3:
+        s.init();
+        game_state++;
+    case 4:
+        s.update(&serect_state,&game_state);
+        s.render();
+        if (game_state == 5) s.deinit();
+        break;
+    case 5:
+        //////// �����ݒ� ////////
+        play.init(serect_state);
+        stege.init(serect_state);
+        objs.init(serect_state);
+         // 散布UI処理
+        handle_spraying_ui();
+
+        // 成長・除草処理（夜）
+        update_growth_logic();
+
+        // 時間切り替えのトリガー：ここではFキーで切り替え
+        f_prev = false;
+       
+        game_state++;
+    case 6:
+        //////// �ʏ펞 ////////
         play.update();
         objs.update();
-        
-
+        stege.re(&game_state);
+        game_render();
         break;
     }
 
@@ -131,10 +173,9 @@ void game_update()
 void game_render()
 {
   GameLib::clear(0.0, 0.0, 0.0);
+  stege.render();
 
-   
-    stege.render();
-//sprite_render(plant, 700, 920 - plant_growth) ;
+
     play.render();
     objs.render();
 
@@ -145,8 +186,12 @@ void game_render()
 //--------------------------------------
 void game_deinit()
 {
-   
-    //safe_delete(plant);
+
+
+    stege.game_deinit();
+    play.game_deinit();
+    objs.game_deinit();
     
+
 }
 

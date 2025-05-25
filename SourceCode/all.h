@@ -9,10 +9,11 @@
 //
 //******************************************************************************
 
-//------< インクルード >---------------------------------------------------------
+//------< ﾆ辰ﾆ停愴誰ﾆ停ｹﾂーﾆ檀 >---------------------------------------------------------
 #include "../GameLib/game_lib.h"
 #include "../GameLib/input_manager.h"
 #include "../GameLib/obj2d_data.h"
+#include "sound.h"
 #include "../GameLib/DirectXTK-master/Inc/Mouse.h"
 #include "../GameLib/DirectXTK-master/Inc/Keyboard.h"
 #include "common.h"
