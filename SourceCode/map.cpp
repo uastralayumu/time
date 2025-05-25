@@ -58,7 +58,6 @@ void maps::init(int &serect_stege)
 	home[1] = sprite_load(L"./Data/Images/U_home_b.png");
   plant = sprite_load(L"./Data/Images/plant_kari.png");
   g_kuki_sprite = sprite_load(L"./Data/Images/G_kuki.png");
-	chara_damage = sprite_load(L"./Data/Images/chara_damage.png");
 	U_kettei1 = sprite_load(L"./Data/Images/U_kettei1.png");
 	U_kettei2 = sprite_load(L"./Data/Images/U_kettei2.png");
 	chara_jyosou = sprite_load(L"./Data/Images/chara_jyosou.png");
@@ -488,15 +487,14 @@ void maps::update()
     };
 
 	
-    kaihukukirikae = hit(playRect, plantRect);
+    planthantei = hit(playRect, plantRect);
 
 	if (kaihukutaimer == 60) kaihukutaimer = 0;
-  state();
 	syuuryou();
   
-  // ============================================================
-// maps::update の末尾あたりに追加
-// ============================================================
+    // ============================================================
+    // maps::update の末尾あたりに追加
+    // ============================================================
 	{
 		// 肥料／除草剤フラグが立っている間だけアニメタイマーを進める
 		if (plantHasFertilizer || plantHasHerbicide) {
@@ -644,7 +642,7 @@ void maps::render()
 	}
 
 
-	if (kaihukukirikae)
+	if (kaihukukirikae || planthantei)
 	{
 		switch (kaihuku)
 		{

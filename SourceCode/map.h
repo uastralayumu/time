@@ -48,20 +48,9 @@ public:
     ========================================================*/
     enum tr_attr
     {
-        TR_NONE = -1,   ///< �ʍs�\
-        ALL_BLOCK        ///< �S�����u���b�N
+        TR_NONE = -1,  
+        ALL_BLOCK      
     };
-
-private:
-
-    /*========================================================
-      ��ԃt���O�E�^�C�}�[
-    ========================================================*/
-    bool kirikae = true;
-    bool kaihukukirikae = false;
-    int  kaihuku = 0;
-    int  kaihukutaimer = 0;
-    bool gorlhantei = FALSE;
 
 public:
 	void init(int &serect_stage);
@@ -117,6 +106,7 @@ private:
   int  plantStage = 0;         ///< 0?3
   bool plantHasFertilizer = false;
   bool plantHasHerbicide = false;
+  bool planthantei = false;
   std::vector<DirectX::XMFLOAT2> kukiList;
 	 
 public:
