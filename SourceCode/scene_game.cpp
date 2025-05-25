@@ -145,11 +145,6 @@ void game_update()
         play.init(serect_state);
         stege.init(serect_state);
         objs.init(serect_state);
-         // 散布UI処理
-        handle_spraying_ui();
-
-        // 成長・除草処理（夜）
-        update_growth_logic();
 
         // 時間切り替えのトリガー：ここではFキーで切り替え
         f_prev = false;
