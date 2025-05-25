@@ -45,7 +45,7 @@ std::unique_ptr<Mouse> mouse;
 Mouse::ButtonStateTracker mouseTracker;
 
 //------< 変数 >----------------------------------------------------------------
-int plant_growth = 0;
+int plant_growth = 32;
 
 
 int fertilizer_amount = 0;  // 肥料量

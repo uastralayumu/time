@@ -39,6 +39,7 @@ Sprite* g_kuki_sprite;          // ※G_Kuki テクスチャ
 Sprite* U_kettei1;
 Sprite* U_kettei2;
 Sprite* home[2];
+Sprite* kuki;
 
 void maps::init(int &serect_stege)
 {
@@ -62,6 +63,7 @@ void maps::init(int &serect_stege)
 	U_kettei2 = sprite_load(L"./Data/Images/U_kettei2.png");
 	chara_jyosou = sprite_load(L"./Data/Images/chara_jyosou.png");
 	chara_hiryou = sprite_load(L"./Data/Images/chara_hiryou.png");
+	kuki = sprite_load(L"./Data/Images/G_kuki.png");
 
 	o.music(14);
 	o.music(15);
@@ -80,6 +82,8 @@ void maps::init(int &serect_stege)
 		panerupos = { 5,14 };
 		gorlpos = { 25,14 };
 		homepos = { 29,0 };
+		sanpulpos = { 1500,100 };
+		pulantpos = { 700,920 };
 		music::pause(15);
 	}
 	kirikae = true;
@@ -293,9 +297,18 @@ static bool hit(const Rect& a, const Rect& b)
   ====================================================================*/
 void maps::handleSanpuClick()
 {
-	if (!kaihukukirikae) return;
+	if (hiyoudasu)
+	{
+		hiyoutimer++;
+		if (hiyoutimer < 60)return;
+		hiyoutimer = 0;
+		hiyoudasu = false;
 
-	if (!(TRG(0) & PAD_START)) return;
+	}
+	if (!planthantei) return;
+
+	if (kaihuku == 0) return;
+
 
 	// マウス座標を float にキャスト
 	float mx = static_cast<float>(getCursorPosX());
@@ -327,15 +340,32 @@ void maps::handleSanpuClick()
 
 
 	}
+	
 
 	
 
-//sanpuの左をクリックするとplantに肥料が散布されてる時charahiryouが動く
+	{
+		//sanpuの左をクリックするとplantに肥料が散布されてる時charahiryouが動く
+		if (mx > sanpulpos.x && mx < sanpulpos.x + 140 && my > sanpulpos.y + 30 && my < sanpulpos.y + 180 && TRG(0) & PAD_START)
+		{
+			kaihuku--;
+			hiyoorjousou = false;
+			hiyoudasu = true;
+			o.music(10);
+			hiryousanpusuu++;
+		}
 
 
-
-//sanpuを右クリックするとplantに除草剤が散布されてる時chara_jyosouが動く
-
+		//sanpuを右クリックするとplantに除草剤が散布されてる時chara_jyosouが動く
+		else if (mx > sanpulpos.x + 170 && mx < sanpulpos.x + 340 && my > sanpulpos.y + 30 && my < sanpulpos.y + 180 && TRG(0) & PAD_TRG3)
+		{
+			kaihuku--;
+			hiyoorjousou = true;
+			hiyoudasu = true;
+			o.music(10);
+			josousanpusuu++;
+		}
+	}
 
 
 
@@ -398,6 +428,7 @@ void maps::update()
 				kirikaemusic = true;
 				if (kirikae)
 				{
+					yorusanpu = hiryousanpusuu;
 					kirikae = FALSE;
 					music::pause(14);
 					music::resume(15);
@@ -424,15 +455,14 @@ void maps::update()
 				play.position.y = panerupos.y * 64 + 28;
 				play.vector.y = 0;
 				play.onGround = TRUE;
-				if (!onemusic && kaihuku != 3)
-				{
-					o.music(6);
-					onemusic = true;
-					twomusic = false;
-				}
-
 				if (kirikae)
 				{
+					if (!onemusic && kaihuku != 3)
+					{
+						o.music(6);
+						onemusic = true;
+						twomusic = false;
+					}
 					kaihukukirikae = TRUE;
 					if (kaihukutaimer == 0)kaihuku++;
 					if (kaihuku > 3)
@@ -605,27 +635,16 @@ void maps::render()
 	sprite_render(botan,
 		botanpos.x, botanpos.y, 1, 1);
 
-
-	sprite_render(chara_hiryou,
-		play.position.x + 100, play.position.y,
-		1, 1, 96 * 2, 0,
-		96,96);
-	if (plantHasFertilizer)
+	
+	
+	if (josousanpusuu < 1)
 	{
-
+		sprite_render(plant, pulantpos.x, pulantpos.y - (plant_growth * yorusanpu) + 8);
+		for (int i = 0; i < yorusanpu; i++)
+		{
+			sprite_render(kuki, pulantpos.x + 32, pulantpos.y - (plant_growth * i) + 72);
+		}
 	}
-
-	/*if (plantHasFertilizer)
-	{
-		sprite_render(chara_hiryou, play.position.x, play.position.y,1,1,96 * 0,96,
-			96);
-	}
-	else
-	{
-		sprite_render(chara_jyosou, play.position.x, play.position.y, 1, 1, 96 * 0, 96,
-			96);
-	}*/
-	sprite_render(plant, 700, 920 - plant_growth);
 	//kaihukuが黄色いボタンsanpulがUI肥料のやつ
 
 	if (!homemove)
@@ -640,7 +659,20 @@ void maps::render()
 			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
 			2, 2);
 	}
-
+	if (planthantei && hiyoudasu)
+	{
+		if (!hiyoorjousou)
+		{
+			sprite_render(chara_hiryou,
+				play.position.x + 10, play.position.y,
+				1, 1, 96 * (hiyoutimer / 15), 0,
+				96, 96);
+		}
+		else sprite_render(chara_jyosou,
+			play.position.x + 10, play.position.y,
+			1, 1, 96 * (hiyoutimer / 15), 0,
+			96, 96);
+	}
 
 	if (kaihukukirikae || planthantei)
 	{
@@ -648,19 +680,19 @@ void maps::render()
 		{
 		case 0:
 			sprite_render(sanpu[0],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 1:
 			sprite_render(sanpu[1],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 2:
 			sprite_render(sanpu[2],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 3:
 			sprite_render(sanpu[3],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		}
 	}

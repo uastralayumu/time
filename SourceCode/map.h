@@ -91,6 +91,8 @@ private:
 	DirectX::XMFLOAT2 panerupos = { 0,0 };
 	DirectX::XMFLOAT2 gorlpos = { 0,0 };
 	DirectX::XMFLOAT2 homepos = { 0,0 };
+	DirectX::XMFLOAT2 sanpulpos = { 0,0 };
+	DirectX::XMFLOAT2 pulantpos = { 0,0};
   
 	bool kirikae = true;
 	bool kaihukukirikae = FALSE;
@@ -107,6 +109,12 @@ private:
   bool plantHasFertilizer = false;
   bool plantHasHerbicide = false;
   bool planthantei = false;
+  bool hiyoorjousou = false;
+  bool hiyoudasu = false;
+  int hiyoutimer = 0;
+  int hiryousanpusuu = 0;
+  int yorusanpu = 0;
+  int josousanpusuu = 0;
   std::vector<DirectX::XMFLOAT2> kukiList;
 	 
 public:
