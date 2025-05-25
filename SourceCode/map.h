@@ -1,27 +1,67 @@
+// ------------------------------------------------------------
+// maps.h
+// �}�b�v�V�X�e����`�w�b�_
+// ------------------------------------------------------------
 #pragma once
 
 #include "all.h"
 #include <memory>
 #include <d3d11.h>
 #include <string>
+#include <vector>
 #include <DirectXMath.h>
 
 
+// ------------------------------------------------------------
+// maps �N���X
+// ------------------------------------------------------------
+
 class maps
 {
-
 public:
-	static const int chip_x = 60;
-	static const int chip_y = 34;
-	static const int CHIP_NUM_PER_LINE = 8;
-	static const int CHIP_LINE_NUM = 2;
 
-	enum tr_attr
-	{
-		TR_NONE = -1,
-		ALL_BLOCK,
-	};
 
+    // �엿�^�����܃A�j���p�̃X�v���C�g
+    GameLib::Sprite* chara_hiryou;
+    GameLib::Sprite* chara_jyosou;
+
+    // �A�j������p�J�E���^
+    int hiryouFrame;
+    int jyosouFrame;
+    float hiryouTimer;
+    float jyosouTimer;
+
+    static constexpr int TOTAL_FRAMES = 4;      // �t���[����
+    static constexpr float FRAME_DURATION = 0.1f; // 1�t���[��������b
+
+
+    /*========================================================
+      �萔
+    ========================================================*/
+    static const int chip_x = 60;
+    static const int chip_y = 34;
+    static const int CHIP_NUM_PER_LINE = 8;
+    static const int CHIP_LINE_NUM = 2;
+
+    /*========================================================
+      �񋓁F�n�`����
+    ========================================================*/
+    enum tr_attr
+    {
+        TR_NONE = -1,   ///< �ʍs�\
+        ALL_BLOCK        ///< �S�����u���b�N
+    };
+
+private:
+
+    /*========================================================
+      ��ԃt���O�E�^�C�}�[
+    ========================================================*/
+    bool kirikae = true;
+    bool kaihukukirikae = false;
+    int  kaihuku = 0;
+    int  kaihukutaimer = 0;
+    bool gorlhantei = FALSE;
 
 public:
 	void init(int &serect_stage);
@@ -31,7 +71,7 @@ public:
 	bool isfloor(float posx,float posy,float width);
 	bool isceiling(float posx, float posy, float width);
 	bool iswall(float x, float y, float height);
-	int getdata(char[][chip_x], const DirectX::XMFLOAT2&);
+	int     getdata(char grid[][chip_x], const DirectX::XMFLOAT2& pos);
 	bool ishitdown(float x,float y);
 	bool ishitall(float x, float y);
 	void playmaphosedown();
@@ -42,10 +82,15 @@ public:
 	void objmaphoseup();
 	void objmaphoseright();
 	void objmaphoseleft();
-	tr_attr getTerrainAttr(const DirectX::XMFLOAT2&);
+	tr_attr getTerrainAttr(const DirectX::XMFLOAT2& pos);
 	void render();
 	void game_deinit();
 	void re(int* screen_game);
+      void handleSanpuClick();      ///< sanpu UI ���E�N���b�N
+    void updatePlantGrowth();     ///< ����ؑ֎��̐����^�މ�
+    void growKuki();              ///< G_Kuki ����
+    void decayKuki();             ///< G_Kuki �폜
+    bool ishitKukiOrPlant(float x, float y); ///< �v���C���Փ˔���
 private:
 	const tr_attr tikeiattr[CHIP_NUM_PER_LINE * CHIP_LINE_NUM] = {
 	   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK, ALL_BLOCK, ALL_BLOCK, ALL_BLOCK,
@@ -57,6 +102,7 @@ private:
 	DirectX::XMFLOAT2 panerupos = { 0,0 };
 	DirectX::XMFLOAT2 gorlpos = { 0,0 };
 	DirectX::XMFLOAT2 homepos = { 0,0 };
+  
 	bool kirikae = true;
 	bool kaihukukirikae = FALSE;
 	int kaihuku = 0;
@@ -68,6 +114,10 @@ private:
 	bool kirikaemusic = false;
 	bool home_music = false;
 	bool gorl_music = false;
+  int  plantStage = 0;         ///< 0?3
+  bool plantHasFertilizer = false;
+  bool plantHasHerbicide = false;
+  std::vector<DirectX::XMFLOAT2> kukiList;
 	 
 public:
 	char toti[chip_y][chip_x] = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -110,3 +160,4 @@ public:
 	
 	
 };
+
