@@ -1,11 +1,26 @@
 #include "map.h"
 #include "obj.h"
 #include "sound.h"
- 
+
 extern player play;
 extern obj objs;
 extern ongaku o;
 
+//// ── 外部シンボル
+constexpr float SANPU_W = 64.0f;
+constexpr float SANPU_H = 64.0f;
+constexpr float PLANT_W = 32.0f;
+constexpr float PLANT_H = 64.0f;
+constexpr float KUKI_W = 32.0f;
+constexpr float KUKI_H = 64.0f;
+constexpr float UI_X = 1500.0f;     
+constexpr float UI_Y = 100.0f;      
+constexpr float UI_W = 340.0f;   // 画像サイズに合わせて調整
+constexpr float UI_H = 192.0f;
+
+
+
+int chara_anim = 0;          // アニメ制御用カウンタ
 
 Sprite* asa;
 Sprite* yoru;
@@ -16,7 +31,15 @@ Sprite* sanpu[4];
 Sprite* gorl;
 Sprite* gorlgo;
 Sprite* saboten;
+
+Sprite* plant;
+Sprite* chara_jyosou;//除草剤
+Sprite* chara_hiryou;//肥料
+Sprite* g_kuki_sprite;          // ※G_Kuki テクスチャ
+Sprite* U_kettei1;
+Sprite* U_kettei2;
 Sprite* home[2];
+Sprite* kuki;
 
 void maps::init(int &serect_stege)
 {
@@ -34,11 +57,19 @@ void maps::init(int &serect_stege)
 	saboten = sprite_load(L"./Data/Images/saboten.png");
 	home[0] = sprite_load(L"./Data/Images/U_home.png");
 	home[1] = sprite_load(L"./Data/Images/U_home_b.png");
+  plant = sprite_load(L"./Data/Images/plant_kari.png");
+  g_kuki_sprite = sprite_load(L"./Data/Images/G_kuki.png");
+	U_kettei1 = sprite_load(L"./Data/Images/U_kettei1.png");
+	U_kettei2 = sprite_load(L"./Data/Images/U_kettei2.png");
+	chara_jyosou = sprite_load(L"./Data/Images/chara_jyosou.png");
+	chara_hiryou = sprite_load(L"./Data/Images/chara_hiryou.png");
+	kuki = sprite_load(L"./Data/Images/G_kuki.png");
+
 	o.music(14);
 	o.music(15);
 	
 	{
-
+    // 可変領域を固定地形で初期化
 		for (int i = 0; i < chip_y; i++)
 		{
 			for (int j = 0; j < chip_x; j++)
@@ -51,6 +82,8 @@ void maps::init(int &serect_stege)
 		panerupos = { 5,14 };
 		gorlpos = { 25,14 };
 		homepos = { 29,0 };
+		sanpulpos = { 1500,100 };
+		pulantpos = { 700,920 };
 		music::pause(15);
 	}
 	kirikae = true;
@@ -64,10 +97,7 @@ void maps::init(int &serect_stege)
 
 	
 }
-
-
-
-bool maps::isfloor(float x,float y,float width)
+bool maps::isfloor(float x, float y, float width)
 {
 	for (; width > 0; width -= 32)
 	{
@@ -76,9 +106,11 @@ bool maps::isfloor(float x,float y,float width)
 
 		if (left < 0) continue;
 		if (right >= chip_x * 32) continue;
+
 		
 		if (ishitdown(left + 5, y)) return true;
 		if (ishitdown(right - 5, y)) return true;
+
 	}
 	return ishitdown(x, y);
 }
@@ -92,9 +124,9 @@ bool maps::isceiling(float x, float y, float width)
 
 		if (left < 240) continue;
 		if (right >= chip_x * 32) continue;
-		if (ishitall(left, y)) 
+		if (ishitall(left, y))
 			return true;
-		if (ishitall(right, y)) 
+		if (ishitall(right, y))
 			return true;
 	}
 	return ishitall(x, y);
@@ -152,7 +184,7 @@ maps::tr_attr maps::getTerrainAttr(const DirectX::XMFLOAT2& pos)
 {
 	int index = getdata(tikei, pos);
 	if (index < 0)return TR_NONE;
-	assert(index < CHIP_NUM_PER_LINE* CHIP_LINE_NUM);
+	assert(index < CHIP_NUM_PER_LINE * CHIP_LINE_NUM);
 	return tikeiattr[index];
 }
 
@@ -229,8 +261,7 @@ bool maps::state()
 	{
 		
 		return true;
-	}
-	
+	}	
 	return false;
 }
 
@@ -239,6 +270,7 @@ void maps::syuuryou()
 	if (play.position.x + 48 > gorlpos.x * 64 && play.position.x < gorlpos.x * 64 + 64 &&
 		play.position.y  < gorlpos.y * 64 + 96 && play.position.y > gorlpos.y * 64 + 28)
 	{
+
 		if(!gorl_music)o.music(9);
 		gorl_music = true;
 		gorlhantei = TRUE;
@@ -249,9 +281,141 @@ void maps::syuuryou()
 	}
 }
 
+//
+///*====================================================================
+//    ユーティリティ：簡易矩形
+// ====================================================================*/
+struct Rect { float x, y, w, h; };
+static bool hit(const Rect& a, const Rect& b)
+{
+    return !(a.x + a.w < b.x || b.x + b.w < a.x ||
+        a.y + a.h < b.y || b.y + b.h < a.y);
+}
+
+ /*====================================================================
+     sanpu UI 左右クリック処理
+  ====================================================================*/
+void maps::handleSanpuClick()
+{
+	if (hiyoudasu)
+	{
+		hiyoutimer++;
+		if (hiyoutimer < 60)return;
+		hiyoutimer = 0;
+		hiyoudasu = false;
+
+	}
+	if (!planthantei) return;
+
+	if (!kirikae) return;
+
+	if (kaihuku == 0) return;
+
+
+	// マウス座標を float にキャスト
+	float mx = static_cast<float>(getCursorPosX());
+	float my = static_cast<float>(getCursorPosY());
+
+
+
+	// 左半分か右半分か
+	bool clickLeft = (UI_X<mx&&mx<UI_X+UI_W&&UI_Y<my&&my<UI_Y+UI_H);
+	//bool clickRight = !clickLeft;
+
+
+		/*-------------------------------------------------
+	 肥料／除草剤フラグの更新
+	-------------------------------------------------*/
+	if (clickLeft)
+	{
+		/*-------------------- 肥料 --------------------*/
+		plantHasFertilizer = true;      // fertilize フラグ ON
+		plantHasHerbicide = false;     // herbicide フラグ OFF
+
+
+	}
+	else
+	{
+		/*-------------------- 除草剤 ------------------*/
+		plantHasHerbicide = true;
+		plantHasFertilizer = false;
+
+
+	}
+	
+
+	
+
+	{
+		//sanpuの左をクリックするとplantに肥料が散布されてる時charahiryouが動く
+		if (mx > sanpulpos.x && mx < sanpulpos.x + 140 && my > sanpulpos.y + 30 && my < sanpulpos.y + 180 && TRG(0) & PAD_START)
+		{
+			kaihuku--;
+			hiyoorjousou = false;
+			hiyoudasu = true;
+			o.music(10);
+			hiryousanpusuu++;
+		}
+
+
+		//sanpuを右クリックするとplantに除草剤が散布されてる時chara_jyosouが動く
+		else if (mx > sanpulpos.x + 170 && mx < sanpulpos.x + 340 && my > sanpulpos.y + 30 && my < sanpulpos.y + 180 && TRG(0) & PAD_TRG3)
+		{
+			kaihuku--;
+			hiyoorjousou = true;
+			hiyoudasu = true;
+			o.music(10);
+			josousanpusuu++;
+		}
+	}
+
+
+
+}
+
+/*====================================================================
+    G_Kuki 生成／削除
+ ====================================================================*/
+void maps::growKuki()
+{
+    DirectX::XMFLOAT2 base = { 700, 920 - plantStage * 32.f };
+    DirectX::XMFLOAT2 p = { base.x + static_cast<float>(kukiList.size() + 1) * 64 * 2, base.y };
+    kukiList.push_back(p);
+}
+void maps::decayKuki()
+{
+    if (!kukiList.empty()) kukiList.pop_back();
+}
+
+/*====================================================================
+    plant / G_Kuki との当たり判定
+ ====================================================================*/
+bool maps::ishitKukiOrPlant(float x, float y)
+{
+    // プレイヤーの AABB
+    Rect pl{ x - 16.0f, y - 32.0f, 32.0f, 64.0f };
+
+    // plant 本体の AABB を定数で定義
+    Rect pr{
+        700.0f,
+        920.0f - plantStage * 32.0f,
+        PLANT_W,
+        PLANT_H
+    };
+    if (hit(pl, pr)) return true;
+
+    // G_Kuki 群との衝突
+    for (auto& k : kukiList) {
+        if (hit(pl, { k.x, k.y, KUKI_W, KUKI_H })) return true;
+    }
+    return false;
+}
+
+
 void maps::update()
 {
-	//���Ɩ�̐؂�ւ�
+ 
+	//朝と夜の切り替え
 	{
 		int getx = getCursorPosX();
 		int gety = getCursorPosY();
@@ -266,6 +430,7 @@ void maps::update()
 				kirikaemusic = true;
 				if (kirikae)
 				{
+					yorusanpu = hiryousanpusuu;
 					kirikae = FALSE;
 					music::pause(14);
 					music::resume(15);
@@ -283,7 +448,7 @@ void maps::update()
 		
 	}
 
-	//�\�[���[�p�l���̓����蔻��
+	//ソーラーパネルの当たり判定
 	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
 		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
 	{
@@ -292,15 +457,14 @@ void maps::update()
 				play.position.y = panerupos.y * 64 + 28;
 				play.vector.y = 0;
 				play.onGround = TRUE;
-				if (!onemusic && kaihuku != 3)
-				{
-					o.music(6);
-					onemusic = true;
-					twomusic = false;
-				}
-
 				if (kirikae)
 				{
+					if (!onemusic && kaihuku != 3)
+					{
+						o.music(6);
+						onemusic = true;
+						twomusic = false;
+					}
 					kaihukukirikae = TRUE;
 					if (kaihukutaimer == 0)kaihuku++;
 					if (kaihuku > 3)
@@ -326,9 +490,73 @@ void maps::update()
 		
 		kaihukukirikae = FALSE;
 	}
+  
+    /* ---------- 既存 UI ボタン処理 ---------- */
+    int cx = getCursorPosX();
+    int cy = getCursorPosY();
+  /*  if (cx > botanpos.x + 70 && cx < botanpos.x + 230 &&
+        cy > botanpos.y + 65 && cy < botanpos.y + 117 &&
+        TRG(0) & PAD_START)
+    {
+        kirikae = !kirikae;
+    }*/
+
+    /* ---------- sanpu UI & plant 処理 ---------- */
+    handleSanpuClick();
+    /*updatePlantGrowth();*/
+
+    /* ---------- plant 付近で sanpu 表示 ---------- */
+    Rect playRect{ play.position.x - 16.0f,
+                     play.position.y - 32.0f,
+                     32.0f, 64.0f };
+
+    
+    Rect plantRect{
+        700.0f,
+        920.0f - plantStage * 32.0f,
+        PLANT_W,
+        PLANT_H
+    };
+
+	
+    planthantei = hit(playRect, plantRect);
 
 	if (kaihukutaimer == 60) kaihukutaimer = 0;
 	syuuryou();
+  
+    // ============================================================
+    // maps::update の末尾あたりに追加
+    // ============================================================
+	{
+		// 肥料／除草剤フラグが立っている間だけアニメタイマーを進める
+		if (plantHasFertilizer || plantHasHerbicide) {
+			chara_anim = (chara_anim + 1) % 60;  // 0～59 でループ
+		}
+		else {
+			chara_anim = 0;
+		}
+	}
+
+	// ============================================================
+	// maps::render 内、sanpu UI 描画のあとに追加
+	// ============================================================
+		// ■ 肥料散布時キャラアニメ
+	if (plantHasFertilizer) {
+		// 例：上下にゆらゆら動かす
+		float dy = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
+		sprite_render(chara_hiryou,
+			play.position.x, play.position.y + 64 + dy,
+			1, 1);
+	}
+
+	// ■ 除草剤散布時キャラアニメ
+	if (plantHasHerbicide) {
+		// 例：左右にゆらゆら動かす
+		float dx = std::sin(chara_anim * 2.0f * 3.1415f / 60.0f) * 5.0f;
+		sprite_render(chara_jyosou,
+			play.position.x + dx, play.position.y + 64,
+			1, 1);
+	}
 	
 }
 
@@ -388,6 +616,7 @@ void maps::render()
 			sprite_render(
 				tuti,
 				i * 32, j * 32,
+
 				1,1,
 				tikei[j][i] * 32, 0,
 				32, 32, 0, 0
@@ -404,9 +633,21 @@ void maps::render()
 	sprite_render(gorl,
 		64 * gorlpos.x, 64 * gorlpos.y + 32);
 
-	
+
 	sprite_render(botan,
 		botanpos.x, botanpos.y, 1, 1);
+
+	
+	
+	if (josousanpusuu < 1)
+	{
+		sprite_render(plant, pulantpos.x, pulantpos.y - (plant_growth * yorusanpu) + 8);
+		for (int i = 0; i < yorusanpu; i++)
+		{
+			sprite_render(kuki, pulantpos.x + 32, pulantpos.y - (plant_growth * i) + 72);
+		}
+	}
+	//kaihukuが黄色いボタンsanpulがUI肥料のやつ
 
 	if (!homemove)
 	{
@@ -420,26 +661,40 @@ void maps::render()
 			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
 			2, 2);
 	}
+	if (planthantei && hiyoudasu)
+	{
+		if (!hiyoorjousou)
+		{
+			sprite_render(chara_hiryou,
+				play.position.x + 10, play.position.y,
+				1, 1, 96 * (hiyoutimer / 15), 0,
+				96, 96);
+		}
+		else sprite_render(chara_jyosou,
+			play.position.x + 10, play.position.y,
+			1, 1, 96 * (hiyoutimer / 15), 0,
+			96, 96);
+	}
 
-	if (kaihukukirikae)
+	if (kaihukukirikae || planthantei)
 	{
 		switch (kaihuku)
 		{
 		case 0:
 			sprite_render(sanpu[0],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 1:
 			sprite_render(sanpu[1],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 2:
 			sprite_render(sanpu[2],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		case 3:
 			sprite_render(sanpu[3],
-				1500, 100, 1, 1);
+				sanpulpos.x, sanpulpos.y, 1, 1);
 			break;
 		}
 	}
@@ -449,6 +704,7 @@ void maps::render()
 		sprite_render(gorlgo,
 			900, 500);
 	}
+
 }
 
 
@@ -464,3 +720,4 @@ void maps::game_deinit()
 	safe_delete(sanpu[3]);
 	safe_delete(gorlgo);
 }
+
