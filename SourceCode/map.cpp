@@ -494,12 +494,12 @@ void maps::update()
     /* ---------- 既存 UI ボタン処理 ---------- */
     int cx = getCursorPosX();
     int cy = getCursorPosY();
-    if (cx > botanpos.x + 70 && cx < botanpos.x + 230 &&
+  /*  if (cx > botanpos.x + 70 && cx < botanpos.x + 230 &&
         cy > botanpos.y + 65 && cy < botanpos.y + 117 &&
         TRG(0) & PAD_START)
     {
         kirikae = !kirikae;
-    }
+    }*/
 
     /* ---------- sanpu UI & plant 処理 ---------- */
     handleSanpuClick();
