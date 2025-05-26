@@ -307,6 +307,8 @@ void maps::handleSanpuClick()
 	}
 	if (!planthantei) return;
 
+	if (!kirikae) return;
+
 	if (kaihuku == 0) return;
 
 
