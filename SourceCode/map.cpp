@@ -186,7 +186,7 @@ void maps::suu(int &serect_stage)
 		josousaboten[i] = false;
 		sabotenjosou[i] = false;
 	}
-	
+	saboten_animation.suu();
 	
 	
 	gameover = false;

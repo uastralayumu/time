@@ -260,6 +260,18 @@ public:
 			}
 		}
 	}
+	void suu()
+	{
+		animation_counter = 0;
+		switch_frame = 0;
+		max_frame = 0;
+		for (int i = 0; i < 10;i++)
+		{
+			animation_frame_no[i] = 0;
+			is_animation_finished[i] = false;
+		}
+		is_loop = false;
+	}
 	void render();
 };
 
