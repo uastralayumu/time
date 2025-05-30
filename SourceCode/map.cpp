@@ -5,6 +5,8 @@
 extern player play;
 extern obj objs;
 extern ongaku o;
+// デバッグ用でサボテン用のアニメーションを定義
+Animation saboten_animation;
 
 //// ── 外部シンボル
 constexpr float SANPU_W = 64.0f;
@@ -36,7 +38,7 @@ void maps::init(int &serect_stage,int &game_title)
 	gorl = sprite_load(L"./Data/Images/G_Gole.png");
 	asayorukirikae[0] = sprite_load(L"./Data/Images/nextUI_kari.png");
 	asayorukirikae[1] = sprite_load(L"./Data/Images/nextUI_kari_2.png");
-	saboten = sprite_load(L"./Data/Images/saboten.png");
+	saboten = sprite_load(L"./Data/Images/G_saboten_kare2.png");
 	home[0] = sprite_load(L"./Data/Images/U_home.png");
 	home[1] = sprite_load(L"./Data/Images/U_home_b.png");
     plant = sprite_load(L"./Data/Images/plant_kari.png");
@@ -83,7 +85,6 @@ void maps::init(int &serect_stage,int &game_title)
 		stagesuuzi[serect_stage] = sprite_load(L"./Data/Images/UI_stage_10.png");
 		break;
 	}
-	
 	
 	retrai[0] = sprite_load(L"./Data/Images/gameover_botton_1.png");
 	retrai[1] = sprite_load(L"./Data/Images/gameover_botton_2.png");
@@ -743,10 +744,21 @@ void maps::update(int& serect_stage, int& game_title)
 		{
 			sabotenhantei[i] = false;
 		}
+
+		if (sabotenjosou[i])
+		{
+			saboten_animation.update(i);
+		}
 	}
+
+	
 	
 	if (kaihukutaimer == 60) kaihukutaimer = 0;
 }
+
+
+
+
 
 void maps::re(int *screen_game,int &serect_state)
 {
@@ -822,6 +834,11 @@ void maps::re(int *screen_game,int &serect_state)
 	}
 }
 
+void Animation::render()
+{
+	
+}
+
 void maps::render(int &serect_stage,int &game_title)
 {
 	if (kirikae)
@@ -867,12 +884,26 @@ void maps::render(int &serect_stage,int &game_title)
 
 	for (int i = 0; i < sabotenkosuu; i++)
 	{
-		if (!sabotensakujo[i])
-		{
+		/*sprite_render(saboten,
+				sabotenpos[i].x * 32, sabotenpos[i].y * 32 + 32);*/
+				// アニメーションが終了していたら描画を行わない
+
+		if (saboten_animation.animation_playing(i) == true) {
 			sprite_render(saboten,
-				sabotenpos[i].x * 32, sabotenpos[i].y * 32 + 32);
+				sabotenpos[i].x * 32,        // 位置 x 
+				sabotenpos[i].y * 32 + 32,    // 位置 y
+				1.0f, 1.0f,
+				saboten_animation.get_animation_frame_no(i) * 96,    // テクスチャの切り取り位置 X 
+				0,    // テクスチャの切り取り位置 Y
+				96,    // テクスチャの切り取り幅
+				96    // テクスチュの切り取り高さ
+			);
+
+
 		}
 	}
+
+
 	sprite_render(gorl,
 		64 * gorlpos.x, 64 * gorlpos.y + 32);
 
@@ -1015,18 +1046,12 @@ void maps::render(int &serect_stage,int &game_title)
 				120 * (gorltimer / 8), 0,
 				120,120);
 		}
-		if (gorltimer > 32 /*&& kirikaekaisuu < kirikaejougen - 1*/)
+		if (gorltimer > 32)
 		{
 			sprite_render(star[0],
 				64 * gorlpos.x - 32, 64 * gorlpos.y,
 				0.5f,0.5f);
 		}
-		/*else if (gorltimer > 32)
-		{
-			sprite_render(star[1],
-				64 * gorlpos.x - 32, 64 * gorlpos.y,
-				0.5f, 0.5f);
-		}*/
 		if (gorltimer > 36 && kirikaekaisuu < kirikaejougen - gorljouken[0])
 		{
 			sprite_render(star[0],

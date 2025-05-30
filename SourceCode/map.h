@@ -79,6 +79,8 @@ public:
 	void re(int* screen_game, int &serect_state);
     void handleSanpuClick(int i);      ///< sanpu UI 
 private:
+	
+
 	Sprite* asa;
 	Sprite* yoru;
 	Sprite* tuti;
@@ -197,5 +199,67 @@ public:
 	};
 	
 	
+};
+
+class Animation
+{
+private:
+	int animation_counter = 0;
+	int animation_frame_no[10] = {};    // 現在のページ番号
+
+	// true...アニメーションが終了した
+	bool is_animation_finished[10] = { false };
+
+	int switch_frame = 0;    // アニメーションの切り替わる時間
+	int max_frame = 0;        // アニメーションの画像の枚数
+	bool is_loop = false;        // true...ループする
+
+public:
+	/// <summary>
+	/// デフォルトコンストラクタ
+	/// 初期化子の設定は、一応サボテンの設定
+	/// </summary>
+	Animation() : switch_frame(12), max_frame(5), is_loop(false) {}
+
+	//紙吹雪
+
+	/// <summary>
+	/// もしかしたらサボテン以外もあるかもしれないのでサボテン以外の設定のコンストラクタ
+	/// </summary>
+	Animation(int switch_frame, int max_frame, bool is_loop)
+	{
+		this->switch_frame = switch_frame;
+		this->max_frame = max_frame;
+		this->is_loop = is_loop;
+	}
+
+	// 現在フレーム番号の取得
+	int get_animation_frame_no(int i) { return animation_frame_no[i]; }
+
+	// true...アニメーション中
+	bool animation_playing(int i) { return is_animation_finished[i] == false; }
+
+	void update(int i)
+	{
+		animation_counter++;
+		// 大体６０で１秒なのでひとまず１秒で１フレーム切り替える
+		if (animation_counter >= switch_frame) {
+			animation_counter = 0;
+			animation_frame_no[i]++;
+			// サボテンの数は５枚なので
+			if (animation_frame_no[i] >= max_frame) {
+				if (is_loop == false) {
+					// ５以上になったら４に戻して、
+					animation_frame_no[i] = max_frame - 1;
+					// 最大になったことだけを通知しておく
+					is_animation_finished[i] = true;
+				}
+				else {
+					animation_frame_no[i] = 0;
+				}
+			}
+		}
+	}
+	void render();
 };
 
