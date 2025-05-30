@@ -11,8 +11,8 @@ public:
 private:
 	Sprite* stage_serect[2];
 	Sprite* stage[20];
-	Sprite* stage_serect_chapter_go;
-	Sprite* stage_serect_chapter_back;
+	Sprite* stage_serect_chapter_go[2];
+	Sprite* stage_serect_chapter_back[2];
 	Sprite* stage_serect_back[2];
 	DirectX::XMFLOAT2 serectpos[5];
 	DirectX::XMFLOAT2 serect_chapter_gopos;

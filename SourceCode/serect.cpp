@@ -26,8 +26,10 @@ void serect::init()
 	stage[17] = sprite_load(L"./Data/Images/1-9_b.png");
 	stage[18] = sprite_load(L"./Data/Images/1-10.png");
 	stage[19] = sprite_load(L"./Data/Images/1-10_b.png");
-	stage_serect_chapter_go = sprite_load(L"./Data/Images/U_next_b.png");
-	stage_serect_chapter_back = sprite_load(L"./Data/Images/U_next_w.png");
+	stage_serect_chapter_go[0] = sprite_load(L"./Data/Images/U_next_b.png");
+	stage_serect_chapter_go[1] = sprite_load(L"./Data/Images/U_next_w2.png");
+	stage_serect_chapter_back[0] = sprite_load(L"./Data/Images/U_next_b2.png");
+	stage_serect_chapter_back[1] = sprite_load(L"./Data/Images/U_next_w.png");
 	stage_serect_back[0] = sprite_load(L"./Data/Images/U_back_b.png");
 	stage_serect_back[1] = sprite_load(L"./Data/Images/U_back_b2.png");
 	serectpos[0] = { 70,120 };
@@ -256,15 +258,33 @@ void serect::render()
 	}
 	if (serect_chapter < 1)
 	{
-		sprite_render(stage_serect_chapter_go,
-			serect_chapter_gopos.x, serect_chapter_gopos.y,
-			2,2);
+		if (!serect_chapter_hantei)
+		{
+			sprite_render(stage_serect_chapter_go[0],
+				serect_chapter_gopos.x, serect_chapter_gopos.y,
+				2, 2);
+		}
+		else
+		{
+			sprite_render(stage_serect_chapter_go[1],
+				serect_chapter_gopos.x, serect_chapter_gopos.y,
+				2, 2);
+		}
 	}
 	if (serect_chapter != 0)
 	{
-		sprite_render(stage_serect_chapter_back,
-			serect_chapter_backpos.x, serect_chapter_backpos.y,
-			2,2);
+		if (!serect_chapter_hantei)
+		{
+			sprite_render(stage_serect_chapter_back[0],
+				serect_chapter_backpos.x, serect_chapter_backpos.y,
+				2, 2);
+		}
+		else
+		{
+			sprite_render(stage_serect_chapter_back[1],
+				serect_chapter_backpos.x, serect_chapter_backpos.y,
+				2, 2);
+		}
 	}
 	if(!serect_back_hantei)
 	sprite_render(stage_serect_back[0],
