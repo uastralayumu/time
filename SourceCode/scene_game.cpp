@@ -45,7 +45,7 @@ std::unique_ptr<Mouse> mouse;
 Mouse::ButtonStateTracker mouseTracker;
 
 //------< 変数 >----------------------------------------------------------------
-int plant_growth = 32;
+int plant_growth = 160 ;
 
 
 int fertilizer_amount = 0;  // 肥料量
@@ -75,11 +75,7 @@ extern ongaku o;
 title t;
 serect s;
 
-
-
-
-int game_title = 0;
-int serect_state = 0;
+Sprite* sukop;
 
 
 //------< 変数 >----------------------------------------------------------------
@@ -107,18 +103,14 @@ void game_init()
 //--------------------------------------
 void game_update()
 {
-    
-  
-
+    ShowCursor(FALSE);
     switch (game_state)
     {
     case 0:
-
-
-        //////// �p�����[�^�̐ݒ� ////////
+        //////// ////////
         GameLib::setBlendMode(Blender::BS_ALPHA);
         o.init();
-
+        sukop = sprite_load(L"./Data/Images/U_cursor.png");
         game_state++;
     case 1:
    
@@ -144,24 +136,27 @@ void game_update()
         if (game_state == 5) s.deinit();
         break;
     case 5:
-        //////// �����ݒ� ////////
-        play.init(serect_state);
-        stege.init(serect_state);
+        ////////////////
         objs.init(serect_state);
-
-        // 時間切り替えのトリガー：ここではFキーで切り替え
-        f_prev = false;
-       
+        play.init(serect_state);
+        stege.init(serect_state,game_title);
+     
         game_state++;
     case 6:
-        //////// �ʏ펞 ////////
-        play.update();
-        objs.update();
-        stege.re(&game_state);
+        ////////  ////////
+        if (!stege.gameover)
+        {
+            play.update(serect_state, game_title);
+            objs.update();
+        }
+        stege.re(&game_state,serect_state);
+        stege.syuuryou(&game_state, &serect_state, serect_state);
         game_render();
         break;
     }
-
+    int getx = getCursorPosX();
+    int gety = getCursorPosY();
+    sprite_render(sukop, getx, gety);
     game_timer++;
 }
 
@@ -171,12 +166,49 @@ void game_update()
 void game_render()
 {
   GameLib::clear(0.0, 0.0, 0.0);
-  stege.render();
-
-
+  stege.render(serect_state,game_title);
     play.render();
     objs.render();
 
+    if (stege.gameover)
+    {
+        sprite_render(stege.gameoverspr, 0, 0);
+    }
+    if (stege.gorlhantei && serect_state < 9)
+    {
+        if (!stege.newstagehantei)
+        {
+            sprite_render(stege.newstege[0],
+                stege.newstegepos.x, stege.newstegepos.y);
+        }
+        else
+        {
+            sprite_render(stege.newstege[1],
+                stege.newstegepos.x, stege.newstegepos.y);
+        }
+    }
+    if(stege.gameover || stege.gorlhantei)
+    {
+        if (!stege.taitoruhantei)
+        {
+            sprite_render(stege.taitoru[0], stege.taitorupos.x + 140, stege.taitorupos.y + 30,
+                1, 1);
+        }
+        else sprite_render(stege.taitoru[1], stege.taitorupos.x, stege.taitorupos.y,
+            2, 2);
+    }
+    if (stege.gameover)
+    {
+        if (!stege.restarthatei)
+        {
+
+            sprite_render(stege.retrai[0], stege.retraipos.x + 140, stege.retraipos.y + 30,
+                1, 1);
+         
+        }
+        else   sprite_render(stege.retrai[1], stege.retraipos.x, stege.retraipos.y,
+            2, 2);
+    }
 }
 
 //--------------------------------------

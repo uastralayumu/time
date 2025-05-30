@@ -26,9 +26,12 @@ void serect::init()
 	stage[17] = sprite_load(L"./Data/Images/1-9_b.png");
 	stage[18] = sprite_load(L"./Data/Images/1-10.png");
 	stage[19] = sprite_load(L"./Data/Images/1-10_b.png");
-	stage_serect_chapter_go = sprite_load(L"./Data/Images/U_next_b.png");
-	stage_serect_chapter_back = sprite_load(L"./Data/Images/U_next_w.png");
-	stage_serect_back = sprite_load(L"./Data/Images/U_back_b.png");
+	stage_serect_chapter_go[0] = sprite_load(L"./Data/Images/U_next_b.png");
+	stage_serect_chapter_go[1] = sprite_load(L"./Data/Images/U_next_w2.png");
+	stage_serect_chapter_back[0] = sprite_load(L"./Data/Images/U_next_b2.png");
+	stage_serect_chapter_back[1] = sprite_load(L"./Data/Images/U_next_w.png");
+	stage_serect_back[0] = sprite_load(L"./Data/Images/U_back_b.png");
+	stage_serect_back[1] = sprite_load(L"./Data/Images/U_back_b2.png");
 	serectpos[0] = { 70,120 };
 	serectpos[1] = { 395,590 };
 	serectpos[2] = { 720,120 };
@@ -44,6 +47,8 @@ void serect::init()
 	}
 	serect_chapter = 0;
 	serect_stage_music = false;
+	serect_back_hantei = false;
+	serect_chapter_hantei = false;
 }
 
 
@@ -54,11 +59,15 @@ void serect::update(int *serect_stage,int*game_state)
 	
 	if (cx > serectpos[0].x + 5 && cx < serectpos[0].x + 475 && cy > serectpos[0].y + 10 && cy < serectpos[0].y + 450)
 	{
-		if(!serect_stage_music)o.music(2);
-		serect_stage_music = true;
+		if (!serect_stage_music)
+		{
+			o.music(2);
+			serect_stage_music = true;
+		}
 		serectnoue[0] = true;
 		if (TRG(0) & PAD_START)
 		{
+			o.music(3);
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 0;
@@ -82,6 +91,7 @@ void serect::update(int *serect_stage,int*game_state)
 		serectnoue[1] = true;
 		if (TRG(0) & PAD_START)
 		{
+			o.music(3);
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 1;
@@ -104,6 +114,7 @@ void serect::update(int *serect_stage,int*game_state)
 		serectnoue[2] = true;
 		if (TRG(0) & PAD_START)
 		{
+			o.music(3);
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 2;
@@ -126,6 +137,7 @@ void serect::update(int *serect_stage,int*game_state)
 		serectnoue[3] = true;
 		if (TRG(0) & PAD_START)
 		{
+			o.music(3);
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 3;
@@ -145,6 +157,7 @@ void serect::update(int *serect_stage,int*game_state)
 		serectnoue[4] = true;
 		if (TRG(0) & PAD_START)
 		{
+			o.music(3);
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 4;
@@ -167,20 +180,48 @@ void serect::update(int *serect_stage,int*game_state)
 		serectnoue[4] = false;
 	}
 	
-	if (cx > serect_chapter_gopos.x && cx < serect_chapter_gopos.x + 128 && cy > serect_chapter_gopos.y && cy < serect_chapter_gopos.y + 128 && TRG(0) & PAD_START
+	if (cx > serect_chapter_gopos.x && cx < serect_chapter_gopos.x + 128 && cy > serect_chapter_gopos.y && cy < serect_chapter_gopos.y + 128 
 		&& serect_chapter < 1)
 	{
-		serect_chapter++;
+		
+		if (!serect_chapter_hantei)
+		{
+			o.music(2);
+			serect_chapter_hantei = true;
+		}
+		if (TRG(0) & PAD_START)
+		{
+			serect_chapter++;
+		}
 	}
-	else if (cx > serect_chapter_backpos.x && cx < serect_chapter_backpos.x + 128 && cy > serect_chapter_backpos.y && cy < serect_chapter_backpos.y + 128 && TRG(0) & PAD_START
+	else if (cx > serect_chapter_backpos.x && cx < serect_chapter_backpos.x + 128 && cy > serect_chapter_backpos.y && cy < serect_chapter_backpos.y + 128
 		&& serect_chapter != 0)
 	{
-		serect_chapter--;
+		if (!serect_chapter_hantei)
+		{
+			o.music(2);
+			serect_chapter_hantei = true;
+		}
+		if (TRG(0) & PAD_START)
+		{
+			serect_chapter--;
+		}
 	}
-	if (cx > stage_serect_backpos.x && cx < stage_serect_backpos.x + 128 && cy > stage_serect_backpos.y && cy < stage_serect_backpos.y + 128 && TRG(0) & PAD_START)
+	else
 	{
-		*game_state = 0;
+		serect_chapter_hantei = false;
 	}
+	if (cx > stage_serect_backpos.x && cx < stage_serect_backpos.x + 128 && cy > stage_serect_backpos.y && cy < stage_serect_backpos.y + 128)
+	{
+		if (!serect_back_hantei) o.music(2);
+		serect_back_hantei = true;
+		if (TRG(0) & PAD_START)
+		{
+			o.music(3);
+			*game_state = 0;
+		}
+	}
+	else serect_back_hantei = false;
 }
 
 void serect::render()
@@ -217,19 +258,41 @@ void serect::render()
 	}
 	if (serect_chapter < 1)
 	{
-		sprite_render(stage_serect_chapter_go,
-			serect_chapter_gopos.x, serect_chapter_gopos.y,
-			2,2);
+		if (!serect_chapter_hantei)
+		{
+			sprite_render(stage_serect_chapter_go[0],
+				serect_chapter_gopos.x, serect_chapter_gopos.y,
+				2, 2);
+		}
+		else
+		{
+			sprite_render(stage_serect_chapter_go[1],
+				serect_chapter_gopos.x, serect_chapter_gopos.y,
+				2, 2);
+		}
 	}
 	if (serect_chapter != 0)
 	{
-		sprite_render(stage_serect_chapter_back,
-			serect_chapter_backpos.x, serect_chapter_backpos.y,
-			2,2);
+		if (!serect_chapter_hantei)
+		{
+			sprite_render(stage_serect_chapter_back[0],
+				serect_chapter_backpos.x, serect_chapter_backpos.y,
+				2, 2);
+		}
+		else
+		{
+			sprite_render(stage_serect_chapter_back[1],
+				serect_chapter_backpos.x, serect_chapter_backpos.y,
+				2, 2);
+		}
 	}
-	sprite_render(stage_serect_back,
+	if(!serect_back_hantei)
+	sprite_render(stage_serect_back[0],
 		stage_serect_backpos.x, stage_serect_backpos.y,
 		2, 2);
+	else sprite_render(stage_serect_back[1],
+			stage_serect_backpos.x, stage_serect_backpos.y,
+			2, 2);
 }
 
 void serect::deinit()

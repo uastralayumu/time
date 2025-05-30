@@ -21,7 +21,7 @@ using namespace GameLib;
 int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)// 使用しない変数は記述しない
 {
     // ゲームライブラリの初期設定
-    GameLib::init(L"ゲームプログラミングⅠ", SCREEN_W, SCREEN_H, FULLSCREEN);
+    GameLib::init(L"グリーンロード", SCREEN_W, SCREEN_H, FULLSCREEN);
 
     game_init();
 
