@@ -18,11 +18,11 @@ public:
 	bool junp = FALSE;
 	bool sayuu = TRUE;
 	bool damege = false;
-private:
-	DirectX::XMFLOAT2 asi = { 16 , 96 };
-	int move = 0;
 	int taikitimer = 0;
 	int taikimovetimer = 0;
+	int move = 0;
+private:
+	DirectX::XMFLOAT2 asi = { 16 , 96 };
 	int timer = 0;
 	int movetimer = 0;
 	int jamptimer = 0;
@@ -32,7 +32,8 @@ private:
 	bool damagemusic = false;
 public:
 	void init(int &serect_stege);
-	void update();
+	void update(int& serect_stage,int &game_title);
 	void render();
 	void game_deinit();
+	void suu(int &serect_stage);
 };

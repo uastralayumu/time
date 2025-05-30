@@ -9,15 +9,18 @@ public:
 	void render();
 	void atrihantei();
 	void game_deinit();
+	void suu(int& serect_stage);
 	
 public:
-	DirectX::XMFLOAT2 position = { 0,0 };
-	DirectX::XMFLOAT2 vector = { 0,0 };
-	bool motu = false;
+	DirectX::XMFLOAT2 position[10] = {};
+	DirectX::XMFLOAT2 vector[10] = {};
+	bool motu[10] = {};
+	int uekikosuu = 0;
 private:
 	DirectX::XMFLOAT2 sita = { 24,96 };
 	int left = 96;
 	bool onGround;
 	
+
 };
 

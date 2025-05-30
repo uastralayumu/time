@@ -19,33 +19,36 @@
 class maps
 {
 public:
-
+	Sprite* retrai[2];
+	Sprite* taitoru[2];
+	Sprite* gameoverspr;
+	Sprite* newstege[2];
 
     // �엿�^�����܃A�j���p�̃X�v���C�g
-    GameLib::Sprite* chara_hiryou;
-    GameLib::Sprite* chara_jyosou;
+    GameLib::Sprite* chara_hiryou;//除草剤
+	GameLib::Sprite* chara_jyosou;//肥料
 
     // �A�j������p�J�E���^
-    int hiryouFrame;
-    int jyosouFrame;
-    float hiryouTimer;
-    float jyosouTimer;
+	DirectX::XMFLOAT2 pulantpos[10] = {};
+	DirectX::XMFLOAT2 retraipos = { 0,0 };
+	DirectX::XMFLOAT2 taitorupos = { 0,0 };
+	DirectX::XMFLOAT2 newstegepos = { 0,0 };
 
-    static constexpr int TOTAL_FRAMES = 4;      // �t���[����
-    static constexpr float FRAME_DURATION = 0.1f; // 1�t���[��������b
+	bool gorlhantei = FALSE;
+	bool gameover = false;
+	bool taitoruhantei = false;
+	bool restarthatei = false;
+	bool taitoruhe = false;
+	bool restart = false;
+	bool newstagehantei = false;
+	bool asayorudamege = false;
 
-
-    /*========================================================
-      �萔
-    ========================================================*/
     static const int chip_x = 60;
     static const int chip_y = 34;
     static const int CHIP_NUM_PER_LINE = 8;
     static const int CHIP_LINE_NUM = 2;
 
-    /*========================================================
-      �񋓁F�n�`����
-    ========================================================*/
+
     enum tr_attr
     {
         TR_NONE = -1,  
@@ -53,68 +56,105 @@ public:
     };
 
 public:
-	void init(int &serect_stage);
-	void update();
-	void syuuryou();
+	void init(int &serect_stage,int & game_title);
+	void suu(int &serect_stage);
+	void update(int &serect_stage,int& game_title);
+	void syuuryou(int *screen_game,int *game_state,int &game_state_b);
 	bool state();
 	bool isfloor(float posx,float posy,float width);
 	bool isceiling(float posx, float posy, float width);
 	bool iswall(float x, float y, float height);
-	int     getdata(char grid[][chip_x], const DirectX::XMFLOAT2& pos);
+	int  getdata(char grid[][chip_x], const DirectX::XMFLOAT2& pos);
 	bool ishitdown(float x,float y);
 	bool ishitall(float x, float y);
 	void playmaphosedown();
 	void playmaphoseup();
 	void playmaphoseright();
 	void playmaphoseleft();
-	void objmaphosedown();
-	void objmaphoseup();
-	void objmaphoseright();
-	void objmaphoseleft();
+	void objmaphosedown(int o);
+	void objmaphoseup(int o);
 	tr_attr getTerrainAttr(const DirectX::XMFLOAT2& pos);
-	void render();
+	void render(int &serect_stage,int & game_title);
 	void game_deinit();
-	void re(int* screen_game);
-      void handleSanpuClick();      ///< sanpu UI ���E�N���b�N
-    void updatePlantGrowth();     ///< ����ؑ֎��̐����^�މ�
-    void growKuki();              ///< G_Kuki ����
-    void decayKuki();             ///< G_Kuki �폜
-    bool ishitKukiOrPlant(float x, float y); ///< �v���C���Փ˔���
+	void re(int* screen_game, int &serect_state);
+    void handleSanpuClick(int i);      ///< sanpu UI 
 private:
+	Sprite* asa;
+	Sprite* yoru;
+	Sprite* tuti;
+	Sprite* botan;
+	Sprite* paneru;
+	Sprite* sanpu[4];
+	Sprite* gorl;
+	Sprite* asayorukirikae[2];
+	Sprite* saboten;
+	Sprite* plant;
+	Sprite* g_kuki_sprite;          // ※G_Kuki テクスチャ
+	Sprite* U_kettei1;
+	Sprite* U_kettei2;
+	Sprite* home[2];
+	Sprite* kuki;
+	Sprite* gorlhubki;
+	Sprite* star[2];
+	Sprite* kanban[11];
+	Sprite* suuzi;
+	Sprite* reset[2];
+	Sprite* stagesuuzi[10];
+
 	const tr_attr tikeiattr[CHIP_NUM_PER_LINE * CHIP_LINE_NUM] = {
 	   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK,   ALL_BLOCK, ALL_BLOCK, ALL_BLOCK, ALL_BLOCK,
 	   TR_NONE,     TR_NONE,     TR_NONE,     TR_NONE,     TR_NONE,   TR_NONE,   TR_NONE,   TR_NONE,
 	};
 	
 	DirectX::XMFLOAT2 botanpos = { 0.0f,0.0f };
-	DirectX::XMFLOAT2 sabotenpos = {0,0 };
+	DirectX::XMFLOAT2 sabotenpos[10] = {};
 	DirectX::XMFLOAT2 panerupos = { 0,0 };
 	DirectX::XMFLOAT2 gorlpos = { 0,0 };
 	DirectX::XMFLOAT2 homepos = { 0,0 };
 	DirectX::XMFLOAT2 sanpulpos = { 0,0 };
-	DirectX::XMFLOAT2 pulantpos = { 0,0};
+	
   
 	bool kirikae = true;
 	bool kaihukukirikae = FALSE;
 	int kaihuku = 0;
 	int kaihukutaimer = 0;
-	bool gorlhantei = FALSE;
 	bool homemove = false;
 	bool onemusic = false;
 	bool twomusic = false;
 	bool kirikaemusic = false;
 	bool home_music = false;
 	bool gorl_music = false;
-  int  plantStage = 0;         ///< 0?3
   bool plantHasFertilizer = false;
   bool plantHasHerbicide = false;
-  bool planthantei = false;
+  bool planthantei[4][4];
   bool hiyoorjousou = false;
   bool hiyoudasu = false;
+  bool sabotenhantei[10] = { false };
+  bool sabotenjosou[10] = { false };
+  bool josousaboten[2] = { false };
+  bool sabotensakujo[10] = { false };
+  bool asayorukirkaeiro = false;
+  bool resethantei = false;
+  bool timercrek = false;
+  bool timerhiryou = false;
+  bool taitorumusic = false;
+
+  int  plantStage = 0;
+  int yoruhiyou = 0;
   int hiyoutimer = 0;
-  int hiryousanpusuu = 0;
-  int yorusanpu = 0;
+  int hiryousanpusuu[10];
+  int yorusanpu[10];
+  int yoruhanteisuu[4];
   int josousanpusuu = 0;
+  int kirikaejougen = 0;
+  int kirikaekaisuu = 0;
+  int gorltimer = 0;
+  int gorljouken[2];
+  int timer = 0;
+  int timerpoint = 0;
+  int sabotenkosuu = 0;
+  int plantkosuu = 0;
+  int plantueki = 0;
   std::vector<DirectX::XMFLOAT2> kukiList;
 	 
 public:
@@ -142,16 +182,16 @@ public:
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0,-1,-1,-1, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0,-1,-1,-1, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	 0,-1, 0,-1, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	0,-1,0,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, };
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
 	char tikei[chip_y][chip_x] ={
 	
 	};
