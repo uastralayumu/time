@@ -150,7 +150,7 @@ void game_update()
             objs.update();
         }
         stege.re(&game_state,serect_state);
-        stege.syuuryou(&game_state, &serect_state, serect_state);
+        stege.syuuryou(&game_state, &serect_state, serect_state,game_title);
         game_render();
         break;
     }
