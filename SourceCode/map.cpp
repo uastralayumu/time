@@ -130,48 +130,269 @@ void maps::suu(int &serect_stage)
 				tikei[i][j] = toti[i][j];
 			}
 		}
-		sabotenpos[0] = {4,28};
-		sabotenpos[1] = {39,28};
-		panerupos = { 25,14 };
-		gorlpos = { 9,11 };
-		pulantpos[0] = {400,920};
-		pulantpos[1] = { 600,920 };
-		pulantpos[2] = { objs.position[0].x,objs.position[0].y - 30};
-		kirikaejougen = 10;
+		sabotenkosuu = 0;
+		panerupos[0] = {24,28};
+		panerukosuu = 1;
+		gorlpos = { 55,7 };
+		pulantpos[0] = {1630,920};
+		pulantpos[1] = { objs.position[0].x,objs.position[0].y - 30};
+		kirikaejougen = 5;
+		kirikae = true;
 		gorljouken[0] = 2;
-		gorljouken[1] = 4;
-		sabotenkosuu = 2;
-		plantkosuu = 3;
+		gorljouken[1] = 3;
+		plantkosuu = 2;
 		plantueki = 1;
 		music::pause(15);
 		break;
 	case 1:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti1[i][j];
+			}
+		}
+		sabotenpos[0] = { 36,24 };
+		panerupos[0] = {24,27};
+		panerukosuu = 1;
+		gorlpos = { 55,9 };
+		pulantpos[0] = { 0,695 };
+		pulantpos[1] = { objs.position[0].x,objs.position[0].y - 30 };
+		plantkosuu = 2;
+		plantueki = 1;
+		kirikaejougen = 5;
+		kirikae = true;
+		gorljouken[0] = 2;
+		gorljouken[1] = 3;
+		sabotenkosuu = 1;
+		music::pause(15);
 		break;
 	case 2:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti2[i][j];
+			}
+		}
+		sabotenpos[0] = { 32,56 };
+		sabotenpos[1] = { 36,56 };
+		sabotenpos[2] = { 36,50 };
+		sabotenpos[3] = { 40,50 };
+		sabotenpos[4] = { 40,44 };
+		sabotenpos[5] = { 40,38 };
+		sabotenpos[6] = { 40,32 };
+		sabotenpos[7] = { 78,56 };
+		sabotenkosuu = 8;
+		panerupos[0] = { 0, 9};
+		panerupos[1] = { 0, 28};
+		panerukosuu = 2;
+		gorlpos = { 52,15 };
+		pulantpos[0] = { 1800,920 };
+		pulantpos[1] = { objs.position[0].x,objs.position[0].y - 30 };
+		plantkosuu = 2;
+		plantueki = 1;
+		kirikaejougen = 6;
+		kirikae = true;
+		gorljouken[0] = 2;
+		gorljouken[1] = 3;
+		
+		music::pause(15);
 		break;
 	case 3:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti3[i][j];
+			}
+		}
+		sabotenpos[0] = { 48,22 };
+		sabotenpos[1] = { 66,22 };
+		sabotenkosuu = 2;
+		panerupos[0] = { 6, 28 };
+		panerukosuu = 1;
+		gorlpos = { 28, -1 };
+		pulantpos[0] = { 900,920 };
+		pulantpos[1] = { objs.position[0].x,objs.position[0].y - 30 };
+		pulantpos[2] = { objs.position[1].x,objs.position[1].y - 30 };
+		plantkosuu = 3;
+		plantueki = 2;
+		kirikaejougen = 6;
+		kirikae = true;
+		gorljouken[0] = 2;
+		gorljouken[1] = 3;
+
+		music::pause(15);
 		break;
 	case 4:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti7[i][j];
+			}
+		}
+		sabotenpos[0] = { 0,26 };
+		sabotenpos[1] = { 34,33 };
+		sabotenpos[2] = { 64,32 };
+		sabotenpos[3] = { 76,36 };
+		sabotenpos[4] = { 82,20 };
+		sabotenpos[5] = { 88,20 };
+		sabotenpos[6] = { 88,26 };
+		sabotenkosuu = 7;
+		panerupos[0] = { 14, 19 };
+		panerupos[1] = { 0, 28 };
+		panerukosuu = 2;
+		pulantpos[0] = { 540,475 };
+		pulantpos[1] = { 940,930 };
+		pulantpos[2] = { 735,535 };
+		pulantpos[3] = { 1570,920 };
+		pulantpos[4] = { objs.position[0].x,objs.position[0].y - 30 };
+		plantkosuu = 5;
+		plantueki = 1;
+		for (int j = 0; j < plantkosuu; j++)
+		{
+			hiryousanpusuu[j] = 0;
+			yorusanpu[j] = 0;
+			for (int i = 0; i < 4; i++)
+			{
+				planthantei[i][j] = false;
+			}
+		}
+		hiryousanpusuu[0] = 1;
+		yorusanpu[0] = 1;
+		hiryousanpusuu[1] = 1;
+		yorusanpu[1] = 1;
+		for (int i = 0; i < 2; i++)
+		{
+			planthantei[i][0] = true;
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			planthantei[i][1] = true;
+		}
+		gorlpos = { 47,1, };
+		kirikaejougen = 9;
+		gorljouken[0] = 3;
+		gorljouken[1] = 5;
+		kirikae = true;
+		
 		break;
 	case 5:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti5[i][j];
+			}
+		}
+		sabotenpos[0] = { 0,48 };
+		sabotenpos[1] = { 30,56 };
+		sabotenpos[2] = { 30,40 };
+		sabotenpos[3] = { 30,34 };
+		sabotenpos[4] = { 30,28 };
+		sabotenpos[5] = { 30,22 };
+		sabotenpos[6] = { 42,56 };
+		sabotenpos[7] = { 42,50 };
+		sabotenpos[8] = { 54,32 };
+		sabotenpos[9] = { 54,26 };
+		sabotenpos[10] = { 80,56 };
+		sabotenpos[11] = { 114,56 };
+
+		sabotenkosuu = 12;
+		pulantpos[0] = { 580,920 };
+		plantkosuu = 1;
+		plantueki = 0;
+		gorlpos = { 30,18 };
+		panerupos[0] = { 0, 28 };
+		panerupos[1] = { 50, 28 };
+		panerukosuu = 2;
+		kirikaejougen = 8;
+		gorljouken[0] = 4;
+		gorljouken[1] = 6;
+		kirikae = true;
 		break;
 	case 6:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti6[i][j];
+			}
+		}
+		saboten = 0;
+		pulantpos[0] = { objs.position[0].x,objs.position[0].y - 30 };
+		pulantpos[1] = { objs.position[1].x,objs.position[1].y - 30 };
+		plantkosuu = 2;
+		plantueki = 2;
+		pulantpos[0] = { 580,920 };
+		pulantpos[1] = { 580,920 };
+		plantkosuu = 2;
+		panerupos[0] = { 13, 17 };
+		panerupos[1] = { 45, 17 };
+		panerukosuu = 2;
+		gorlpos = { 29,6 };
+		kirikaejougen = 8;
+		gorljouken[0] = 2;
+		gorljouken[1] = 4;
+		kirikae = true;
 		break;
 	case 7:
-		break;
-	case 8:
-		break;
-	case 9:
+		for (int i = 0; i < chip_y; i++)
+		{
+			for (int j = 0; j < chip_x; j++)
+			{
+				tikei[i][j] = toti4[i][j];
+			}
+		}
+		sabotenpos[0] = { 104,38 };
+		sabotenpos[1] = { 78,32 };
+		sabotenpos[2] = { 54,32 };
+		sabotenpos[3] = { 104,0 };
+		sabotenkosuu = 4;
+		pulantpos[0] = { 790,920 };
+		pulantpos[1] = { 1220,450 };
+		pulantpos[2] = { 780,80 };
+		pulantpos[3] = { 0,920 };
+		pulantpos[4] = { 1850,640 };
+		pulantpos[5] = { objs.position[0].x,objs.position[0].y - 30 };
+		pulantpos[6] = { objs.position[1].x,objs.position[1].y - 30 };
+		plantkosuu = 7;
+		plantueki = 2;
+		for (int j = 0; j < plantkosuu; j++)
+		{
+			hiryousanpusuu[j] = 0;
+			yorusanpu[j] = 0;
+			for (int i = 0; i < 4; i++)
+			{
+				planthantei[i][j] = false;
+			}
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				planthantei[j][i] = true;
+			}
+			hiryousanpusuu[i] = 1;
+			yorusanpu[i] = 1;
+		}
+		panerupos[0] = { 41, 22 };
+		panerupos[1] = { 22, 20 };
+		panerupos[2] = { 54, 7 };
+		panerukosuu = 3;
+		gorlpos = { 13,3 };
+		kirikaejougen = 9;
+		gorljouken[0] = 1;
+		gorljouken[1] = 3;
+		kirikae = true;
 		break;
 	};
-	//仮の上限
-	kirikaejougen = 5;
-
 	taitoruhe = false;
 	restart = false;
 	timer = 0;
-	kirikae = true;
-	kaihukukirikae = FALSE;
 	kaihuku = 0;
 	kaihukutaimer = 0;
 	gorlhantei = FALSE;
@@ -188,19 +409,31 @@ void maps::suu(int &serect_stage)
 	}
 	saboten_animation.suu();
 	
+	for (int i = 0; i < panerukosuu; i++)
+	{
+		kaihukukirikae[i] = FALSE;
+	}
 	
 	gameover = false;
 	timercrek = false;
 	timerhiryou = false;
-	for (int j = 0; j < plantkosuu; j++)
+	if (serect_stage != 7 && serect_stage !=  4)
 	{
-		hiryousanpusuu[j] = 0;
-		yorusanpu[j] = 0;
-		for (int i = 0; i < 4; i++)
+		for (int j = 0; j < plantkosuu; j++)
 		{
-			planthantei[i][j] = false;
+			hiryousanpusuu[j] = 0;
+			yorusanpu[j] = 0;
+			for (int i = 0; i < 4; i++)
+			{
+				planthantei[i][j] = false;
+			}
 		}
 	}
+	for (int i = 0; i < plantkosuu; i++)
+	{
+		hiryousanpuhantei[i] = false;
+	}
+
 	yoruhiyou = 0;
 	gorltimer = 0;
 	kirikaekaisuu = 0;
@@ -354,8 +587,8 @@ bool maps::state()
 {
 	for (int i = 0; i < sabotenkosuu; i++)
 	{
-		if (play.position.x + 56 > sabotenpos[i].x * 32 && play.position.x < sabotenpos[i].x * 32 + 56 &&
-			play.position.y  < sabotenpos[i].y * 32 + 96 && play.position.y + 64 > sabotenpos[i].y * 32 && !sabotenjosou[i])
+		if (play.position.x + 56 > sabotenpos[i].x * 16 && play.position.x < sabotenpos[i].x * 16 + 56 &&
+			play.position.y  < sabotenpos[i].y * 16 + 96 && play.position.y + 64 > sabotenpos[i].y * 16 && !sabotenjosou[i])
 		{
 			asayorudamege = true;
 			return true;
@@ -365,16 +598,17 @@ bool maps::state()
 
 }
 
-void maps::syuuryou(int* game_state,int * screen_game,int & screen_game_b)
+void maps::syuuryou(int* game_state,int * screen_game,int & screen_game_b,int& game_title)
 {
-	if (play.position.x + 48 > gorlpos.x * 64 && play.position.x < gorlpos.x * 64 + 32 &&
-		play.position.y  < gorlpos.y * 64 + 96 && play.position.y > gorlpos.y * 64 + 28)
+	if (play.position.x + 48 > gorlpos.x * 32 && play.position.x < gorlpos.x * 32 + 32 &&
+		play.position.y  < gorlpos.y * 32 + 96 && play.position.y > gorlpos.y * 32 + 28)
 	{
 		int getx = getCursorPosX();
 		int gety = getCursorPosY();
 		newstegepos = { 690,500 };
 		taitorupos = { 670,300 };
 		play.move = 0;
+		game_title = 0;
 		if(!gorl_music)o.music(9);
 		gorl_music = true;
 		gorlhantei = TRUE;
@@ -483,6 +717,8 @@ void maps::handleSanpuClick(int i)
 				hiyoudasu = true;
 				o.music(10);
 				hiryousanpusuu[i]++;
+				hiryousanpuhantei[i] = false;
+				hiryousanpujosouhantei[i] = true;
 				timerhiryou = true;
 			}
 
@@ -495,6 +731,8 @@ void maps::handleSanpuClick(int i)
 				hiyoudasu = true;
 				o.music(10);
 				hiryousanpusuu[i]--;
+				hiryousanpuhantei[i] = true;
+				hiryousanpujosouhantei[i] = false;
 			}
 		
 	}
@@ -534,21 +772,25 @@ void maps::update(int& serect_stage, int& game_title)
 						sabotensakujo[i] = true;
 					}
 				}
-				if (kirikae)
-				{
+				
 					for (int i = 0; i < plantkosuu; i++)
 					{
 						if (hiryousanpusuu[i] > 3)
 						{
 							hiryousanpusuu[i] = 3;
 						}
-						if (hiryousanpusuu[i] < 0)
+						if (hiryousanpuhantei[i] == true)
 						{
 							o.music(12);
 						}
-						else if(hiryousanpusuu[i] > 0) o.music(11);
+						else if (hiryousanpujosouhantei[i] == true)
+						{
+							o.music(11);
+						}
 						yorusanpu[i] = hiryousanpusuu[i];
 					}
+				if (kirikae)
+				{
 					kirikae = FALSE;
 					music::pause(14);
 					music::resume(15);
@@ -603,65 +845,72 @@ void maps::update(int& serect_stage, int& game_title)
 			}
 		}
 	}
-
-	for (int j = 0; j < objs.uekikosuu; j++)
+	for (int i = plantkosuu - plantueki; i < plantkosuu; i++)
 	{
-		for (int i = plantkosuu - plantueki; i < plantkosuu; i++)
+		
 		{
-			pulantpos[i].x = objs.position[j].x;
-			pulantpos[i].y = objs.position[j].y - 30;
+
+			pulantpos[i].x = objs.position[i - (plantkosuu - plantueki)].x;
+			pulantpos[i].y = objs.position[i - (plantkosuu - plantueki)].y - 30;
+			if (i == 2)
+			{
+				int a = 0;
+			}
 		}
 	}
 
 	//ソーラーパネルの当たり判定
-	if (play.position.x + 48 > panerupos.x * 64 && play.position.x < panerupos.x * 64 + 40 &&
-		play.position.y  < panerupos.y * 64 + 40 && play.position.y > panerupos.y * 64 + 28)
+	for (int i = 0; i < panerukosuu; i++)
 	{
-		if (play.position.y > panerupos.y * 64 + 28 && play.position.y < panerupos.y * 64 + 40)
+		if (play.position.x + 48 > panerupos[i].x * 32 && play.position.x < panerupos[i].x * 32 + 40 &&
+			play.position.y  < panerupos[i].y * 32 + 40 && play.position.y > panerupos[i].y * 32 + 28)
 		{
-			play.position.y = panerupos.y * 64 + 28;
-			play.vector.y = 0;
-			play.onGround = TRUE;
-			if (kirikae)
+			if (play.position.y > panerupos[i].y * 32 + 28 && play.position.y < panerupos[i].y * 64 + 40)
 			{
-				if (yoruhiyou < 3)
+				play.position.y = panerupos[i].y * 32 + 28;
+				play.vector.y = 0;
+				play.onGround = TRUE;
+				if (kirikae)
 				{
+					if (yoruhiyou < 3)
+					{
 
-					if (!onemusic && kaihuku != 3)
-					{
-						o.music(6);
-						onemusic = true;
-						twomusic = false;
-					}
-					kaihukukirikae = TRUE;
-					if (kaihukutaimer == 0)
-					{
-						kaihuku++;
-						yoruhiyou++;
-					}
-					if (kaihuku > 2)
-					{
-						kaihuku = 3;
-						if (!twomusic)
+						if (!onemusic[i] && kaihuku != 3)
 						{
-							o.music(7);
-							twomusic = true;
+							o.music(6);
+							onemusic[i] = true;
+							twomusic = false;
 						}
+						kaihukukirikae[i] = TRUE;
+						if (kaihukutaimer == 0)
+						{
+							kaihuku++;
+							yoruhiyou++;
+						}
+						if (kaihuku > 2)
+						{
+							kaihuku = 3;
+							if (!twomusic)
+							{
+								o.music(7);
+								twomusic = true;
+							}
+						}
+						kaihukutaimer++;
 					}
-					kaihukutaimer++;
+				}
+				else
+				{
+					kaihukukirikae[i] = FALSE;
 				}
 			}
-			else
-			{
-				kaihukukirikae = FALSE;
-			}
 		}
-	}
-	else
-	{
-		onemusic = false;
+		else
+		{
+			onemusic[i] = false;
 
-		kaihukukirikae = FALSE;
+			kaihukukirikae[i] = FALSE;
+		}
 	}
 
 	if (hiyoudasu)
@@ -681,7 +930,7 @@ void maps::update(int& serect_stage, int& game_title)
 	/* ---------- sanpu UI & plant 処理 ---------- */
 	for (int j = 0; j < plantkosuu; j++)
 	{
-		for (int i = 0; i < yorusanpu[0] + 1; i++)
+		for (int i = 0; i < yorusanpu[j] + 1; i++)
 		{
 			if (planthantei[i][j])
 			{
@@ -696,7 +945,7 @@ void maps::update(int& serect_stage, int& game_title)
 						 play.position.y - 32.0f,
 						 32.0f, 64.0f };
 
-		Rect plantRect[4][4];
+		Rect plantRect[4][10];
 		for (int j = 0; j < plantkosuu; j++)
 		{
 			for (int i = 0; i < yorusanpu[j] + 1; i++)
@@ -723,8 +972,9 @@ void maps::update(int& serect_stage, int& game_title)
 	
 	for (int i = 0; i < sabotenkosuu; i++)
 	{
-		if (play.position.x + 80 > sabotenpos[i].x * 32 && play.position.x < sabotenpos[i].x * 32 + 80 &&
-			play.position.y  < sabotenpos[i].y * 32 + 96 && play.position.y + 64 > sabotenpos[i].y * 32)
+		if (play.position.x + 80 > sabotenpos[i].x * 16 && play.position.x < sabotenpos[i].x * 16 + 80 &&
+			play.position.y  < sabotenpos[i].y * 16 + 96 && play.position.y + 64 > sabotenpos[i].y * 16&&
+			!sabotenjosou[i])
 		{
 			sabotenhantei[i] = true;
 
@@ -879,9 +1129,14 @@ void maps::render(int &serect_stage,int &game_title)
 		}
 	}
 
-	sprite_render(paneru,
-		64 * panerupos.x, 64 * panerupos.y + 32);
+	for (int i = 0; i < panerukosuu; i++)
+	{
+		sprite_render(paneru,
+			32 * panerupos[i].x,
+			32 * panerupos[i].y + 32);
+	}
 
+	/*texture::begin(saboten)*/
 	for (int i = 0; i < sabotenkosuu; i++)
 	{
 		/*sprite_render(saboten,
@@ -890,8 +1145,8 @@ void maps::render(int &serect_stage,int &game_title)
 
 		if (saboten_animation.animation_playing(i) == true) {
 			sprite_render(saboten,
-				sabotenpos[i].x * 32,        // 位置 x 
-				sabotenpos[i].y * 32 + 32,    // 位置 y
+				sabotenpos[i].x * 16,        // 位置 x 
+				sabotenpos[i].y * 16 + 32,    // 位置 y
 				1.0f, 1.0f,
 				saboten_animation.get_animation_frame_no(i) * 96,    // テクスチャの切り取り位置 X 
 				0,    // テクスチャの切り取り位置 Y
@@ -905,7 +1160,7 @@ void maps::render(int &serect_stage,int &game_title)
 
 
 	sprite_render(gorl,
-		64 * gorlpos.x, 64 * gorlpos.y + 32);
+		32 * gorlpos.x, 32 * gorlpos.y + 32);
 
 
 	sprite_render(botan,
@@ -947,13 +1202,13 @@ void maps::render(int &serect_stage,int &game_title)
 	
 	for (int j = 0; j < plantkosuu; j++)
 	{
-		for (int i = 0; i < yorusanpu[j] + 1; i++)
-		{
-			sprite_render(plant, pulantpos[j].x, pulantpos[j].y - (plant_growth * i) + 8);
-		}
 		for (int i = 0; i < yorusanpu[j] * 5; i++)
 		{
 			sprite_render(kuki, pulantpos[j].x + 32, pulantpos[j].y - (32 * i) + 72);
+		}
+		for (int i = 0; i < yorusanpu[j] + 1; i++)
+		{
+			sprite_render(plant, pulantpos[j].x, pulantpos[j].y - (plant_growth * i) + 8);
 		}
 	}
 	
@@ -971,13 +1226,14 @@ void maps::render(int &serect_stage,int &game_title)
 			homepos.x * 64 + 20 - 32, homepos.y * 32 + 10,
 			2, 2);
 	}
-	for (int j = 0; j < sabotenkosuu; j++)
+
+	for (int i = 0; i < panerukosuu; i++)
 	{
 		for (int k = 0; k < plantkosuu; k++)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				if ((planthantei[i][k] || sabotenhantei[j]) && hiyoudasu)
+				if ((planthantei[i][k]) && hiyoudasu)
 				{
 					if (play.sayuu)
 					{
@@ -1009,7 +1265,7 @@ void maps::render(int &serect_stage,int &game_title)
 					}
 				}
 
-				if (kaihukukirikae || planthantei[i][k] || sabotenhantei[j] && !sabotenjosou[j])
+				if (kaihukukirikae[i] || planthantei[i][k])
 				{
 					switch (kaihuku)
 					{
@@ -1033,6 +1289,64 @@ void maps::render(int &serect_stage,int &game_title)
 				}
 			}
 		}
+	
+		for (int j = 0; j < sabotenkosuu; j++)
+		{
+			if (sabotenhantei[j] && hiyoudasu)
+			{
+				if (play.sayuu)
+				{
+					if (!hiyoorjousou)
+					{
+						sprite_render(chara_hiryou,
+							play.position.x + 10, play.position.y,
+							1, 1, 96 * (hiyoutimer / 15), 0,
+							96, 96);
+					}
+					else sprite_render(chara_jyosou,
+						play.position.x + 10, play.position.y,
+						1, 1, 96 * (hiyoutimer / 15), 0,
+						96, 96);
+				}
+				else
+				{
+					if (!hiyoorjousou)
+					{
+						sprite_render(chara_hiryou,
+							play.position.x + 85, play.position.y,
+							-1, 1, 96 * (hiyoutimer / 15), 0,
+							96, 96);
+					}
+					else sprite_render(chara_jyosou,
+						play.position.x + 85, play.position.y,
+						-1, 1, 96 * (hiyoutimer / 15), 0,
+						96, 96);
+				}
+			}
+
+			if (sabotenhantei[j] && !sabotenjosou[j])
+			{
+				switch (kaihuku)
+				{
+				case 0:
+					sprite_render(sanpu[0],
+						sanpulpos.x, sanpulpos.y, 1, 1);
+					break;
+				case 1:
+					sprite_render(sanpu[1],
+						sanpulpos.x, sanpulpos.y, 1, 1);
+					break;
+				case 2:
+					sprite_render(sanpu[2],
+						sanpulpos.x, sanpulpos.y, 1, 1);
+					break;
+				case 3:
+					sprite_render(sanpu[3],
+						sanpulpos.x, sanpulpos.y, 1, 1);
+					break;
+				}
+			}
+		}
 	}
 
 	if (gorlhantei)
@@ -1041,7 +1355,7 @@ void maps::render(int &serect_stage,int &game_title)
 		if (gorltimer > 0 && gorltimer < 56)
 		{
 			sprite_render(gorlhubki,
-				64 * gorlpos.x - 30, 64 * gorlpos.y - 30,
+				32 * gorlpos.x - 30, 32 * gorlpos.y - 30,
 				1.5f,1.25f,
 				120 * (gorltimer / 8), 0,
 				120,120);
@@ -1049,31 +1363,31 @@ void maps::render(int &serect_stage,int &game_title)
 		if (gorltimer > 32)
 		{
 			sprite_render(star[0],
-				64 * gorlpos.x - 32, 64 * gorlpos.y,
+				32 * gorlpos.x - 32, 32 * gorlpos.y,
 				0.5f,0.5f);
 		}
 		if (gorltimer > 36 && kirikaekaisuu < kirikaejougen - gorljouken[0])
 		{
 			sprite_render(star[0],
-				64 * gorlpos.x + 24, 64 * gorlpos.y,
+				32 * gorlpos.x + 24, 32 * gorlpos.y,
 				0.5f, 0.5f);
 		}
 		else if (gorltimer > 37)
 		{
 			sprite_render(star[1],
-				64 * gorlpos.x + 24, 64 * gorlpos.y,
+				32 * gorlpos.x + 24, 32 * gorlpos.y,
 				0.5f, 0.5f);
 		}
 		if (gorltimer > 40 && kirikaekaisuu < kirikaejougen - gorljouken[1])
 		{
 			sprite_render(star[0],
-				64 * gorlpos.x + 80, 64 * gorlpos.y,
+				32 * gorlpos.x + 80, 32 * gorlpos.y,
 				0.5f, 0.5f);
 		}
 		else if (gorltimer > 42)
 		{
 			sprite_render(star[1],
-				64 * gorlpos.x + 80, 64 * gorlpos.y,
+				32 * gorlpos.x + 80, 32 * gorlpos.y,
 				0.5f, 0.5f);
 		}
 	}

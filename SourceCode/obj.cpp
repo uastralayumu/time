@@ -22,28 +22,47 @@ void obj::suu(int& serect_stage)
 	switch (serect_stage)
 	{
 	case 0:
-		uekikosuu = 2;
-		position[0] = {1500,930};
-		position[1] = {500,930};
-
+		uekikosuu = 1;
+		position[0] = {0,930};
+		break;
 	case 1:
+		uekikosuu = 1;
+		position[0] = { 500,430 };
 		break;
 	case 2:
+		uekikosuu = 1;
+		position[0] = { 0,930 };
 		break;
 	case 3:
+		uekikosuu = 2;
+		position[0] = { 1500,930 };
+		position[1] = { 1400,930 };
 		break;
 	case 4:
+		uekikosuu = 1;
+		position[0] = { 1120,350 };
 		break;
 	case 5:
+		uekikosuu = 0;
 		break;
 	case 6:
+		uekikosuu = 4;
+		position[0] = { 1190,0 };
+		position[1] = { 660,0 };
+		position[2] = { 1100,900 };
+		position[3] = { 760,900 };
 		break;
 	case 7:
+		uekikosuu = 4;
+		position[0] = { 1700,530 };
+		position[1] = { 100,550 };
+		position[2] = { 1600,930 };
+		position[3] = { 900,680 };
 		break;
-	case 8:
-		break;
-	case 9:
-		break;
+	}
+	for (int i = 0; i < uekikosuu; i++)
+	{
+		motu[i] = false;
 	}
 }
 
@@ -176,10 +195,33 @@ void obj::update()
 	{
 		for (int u = o + 1; u < uekikosuu; u++)
 		{
-			if (position[o].x == position[u].x && position[o].y == position[u].y)
+			if (position[o].y + 50 < position[u].y + 96 && position[o].y + 96 > position[u].y + 50
+				&& position[o].x + 60 > position[u].x + 20 && position[o].x + 20 < position[u].x + 60
+				&& (!motu[o] || !motu[u]) || position[o].x == position[u].x && position[o].y == position[u].y)
 			{
-				position[o].x += 10;
+				if(position[o].y < position[u].y)
+				{
+					position[o].y = position[u].y - 51;
+				}
+				else if (position[o].y > position[u].y)
+				{
+					position[u].y = position[o].y - 51;
+				}
+				else if (position[o].x < position[u].x)
+				{
+					position[o].x = position[u].x + 96;
+				}
+				else if (position[o].x > position[u].x)
+				{
+					position[u].x = position[o].x + 96;
+				}
+				if (motu[o] == true&& motu[u] == true)
+				{
+					motu[u] = false;
+				}
+
 			}
+			
 		}
 	}
 

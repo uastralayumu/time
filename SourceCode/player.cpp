@@ -34,25 +34,28 @@ void player::suu(int &serect_stage)
 	switch (serect_stage)
 	{
 	case 0:
-		position = { 1000.0f,930.0f };
+		position = { 40.0f,550.0f };
 		break;
 	case 1:
+		position = { 500.0f,880.0f };
 		break;
 	case 2:
+		position = { 200.0f,0.0f };
 		break;
 	case 3:
+		position = { 1800,500 };
 		break;
 	case 4:
+		position = { 100,440 };
 		break;
 	case 5:
+		position = { 0.0f,0.0f };
 		break;
 	case 6:
+		position = { 900.0f,0.0f };
 		break;
 	case 7:
-		break;
-	case 8:
-		break;
-	case 9:
+		position = { 1650.0f,930.0f };
 		break;
 	}
 	move = 0;
@@ -80,7 +83,7 @@ void player::update(int& serect_stage,int &game_title)
 				{
 					suu(serect_stage);
 					//stege.suu(serect_stage);
-					vector = { 0,0 };
+					/*vector = { 0,0 };*/
 					for (int i = 0; i < objs.uekikosuu; i++)
 					{
 						objs.motu[i] = false;

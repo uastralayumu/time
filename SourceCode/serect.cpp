@@ -22,16 +22,21 @@ void serect::init()
 	stage[13] = sprite_load(L"./Data/Images/1-7_b.png");
 	stage[14] = sprite_load(L"./Data/Images/1-8.png");
 	stage[15] = sprite_load(L"./Data/Images/1-8_b.png");
-	stage[16] = sprite_load(L"./Data/Images/1-9.png");
-	stage[17] = sprite_load(L"./Data/Images/1-9_b.png");
-	stage[18] = sprite_load(L"./Data/Images/1-10.png");
-	stage[19] = sprite_load(L"./Data/Images/1-10_b.png");
 	stage_serect_chapter_go[0] = sprite_load(L"./Data/Images/U_next_b.png");
 	stage_serect_chapter_go[1] = sprite_load(L"./Data/Images/U_next_w2.png");
 	stage_serect_chapter_back[0] = sprite_load(L"./Data/Images/U_next_b2.png");
 	stage_serect_chapter_back[1] = sprite_load(L"./Data/Images/U_next_w.png");
 	stage_serect_back[0] = sprite_load(L"./Data/Images/U_back_b.png");
 	stage_serect_back[1] = sprite_load(L"./Data/Images/U_back_b2.png");
+	stege_serect_gamen[0] = sprite_load(L"./Data/Images/1.png");
+	stege_serect_gamen[1] = sprite_load(L"./Data/Images/2.png");
+	stege_serect_gamen[2] = sprite_load(L"./Data/Images/3.png");
+	stege_serect_gamen[3] = sprite_load(L"./Data/Images/4.png");
+	stege_serect_gamen[4] = sprite_load(L"./Data/Images/5.png");
+	stege_serect_gamen[5] = sprite_load(L"./Data/Images/6.png");
+	stege_serect_gamen[6] = sprite_load(L"./Data/Images/7.png");
+	stege_serect_gamen[7] = sprite_load(L"./Data/Images/8.png");
+	muzui = sprite_load(L"./Data/Images/muzu.png");
 	serectpos[0] = { 70,120 };
 	serectpos[1] = { 395,590 };
 	serectpos[2] = { 720,120 };
@@ -142,10 +147,6 @@ void serect::update(int *serect_stage,int*game_state)
 			{
 				*serect_stage = 3;
 			}
-			else if (serect_chapter == 1)
-			{
-				*serect_stage = 8;
-			}
 			music::stop(16);
 			*game_state = 5;
 		}
@@ -161,10 +162,6 @@ void serect::update(int *serect_stage,int*game_state)
 			if (serect_chapter == 0)
 			{
 				*serect_stage = 4;
-			}
-			else if (serect_chapter == 1)
-			{
-				*serect_stage = 9;
 			}
 			music::stop(16);
 			*game_state = 5;
@@ -241,6 +238,13 @@ void serect::render()
 		else sprite_render(stage[7], serectpos[3].x, serectpos[3].y);
 		if (!serectnoue[4]) sprite_render(stage[8], serectpos[4].x, serectpos[4].y);
 		else sprite_render(stage[9], serectpos[4].x, serectpos[4].y);
+		sprite_render(stege_serect_gamen[0], serectpos[0].x + 25, serectpos[0].y + 120);
+		sprite_render(stege_serect_gamen[1], serectpos[1].x + 25, serectpos[1].y + 120);
+		sprite_render(stege_serect_gamen[2], serectpos[2].x + 25, serectpos[2].y + 120);
+		sprite_render(stege_serect_gamen[3], serectpos[3].x + 25, serectpos[3].y + 120);
+		sprite_render(stege_serect_gamen[4], serectpos[4].x + 25, serectpos[4].y + 120);
+		sprite_render(muzui, serectpos[4].x + 0, serectpos[4].y + 10);
+		
 		break;
 	case 1:
 		sprite_render(stage_serect[1], 0, 0);
@@ -250,10 +254,11 @@ void serect::render()
 		else sprite_render(stage[13], serectpos[1].x, serectpos[1].y);
 		if (!serectnoue[2]) sprite_render(stage[14], serectpos[2].x, serectpos[2].y);
 		else sprite_render(stage[15], serectpos[2].x, serectpos[2].y);
-		if (!serectnoue[3]) sprite_render(stage[16], serectpos[3].x, serectpos[3].y);
-		else sprite_render(stage[17], serectpos[3].x, serectpos[3].y);
-		if (!serectnoue[4]) sprite_render(stage[18], serectpos[4].x, serectpos[4].y);
-		else sprite_render(stage[19], serectpos[4].x, serectpos[4].y);
+		sprite_render(stege_serect_gamen[5], serectpos[0].x + 25, serectpos[0].y + 120);
+		sprite_render(stege_serect_gamen[6], serectpos[1].x + 25, serectpos[1].y + 120);
+		sprite_render(stege_serect_gamen[7], serectpos[2].x + 25, serectpos[2].y + 120);
+		sprite_render(muzui, serectpos[0].x + 0, serectpos[0].y + 10);
+		sprite_render(muzui, serectpos[2].x + 0, serectpos[2].y + 10);
 		break;
 	}
 	if (serect_chapter < 1)

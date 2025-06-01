@@ -14,6 +14,8 @@ private:
 	Sprite* stage_serect_chapter_go[2];
 	Sprite* stage_serect_chapter_back[2];
 	Sprite* stage_serect_back[2];
+	Sprite* stege_serect_gamen[8];
+	Sprite* muzui;
 	DirectX::XMFLOAT2 serectpos[5];
 	DirectX::XMFLOAT2 serect_chapter_gopos;
 	DirectX::XMFLOAT2 serect_chapter_backpos;
